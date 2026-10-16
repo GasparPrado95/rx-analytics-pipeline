@@ -1,0 +1,41 @@
+# --- Secrets: never commit credentials ---
+.env
+*.env
+!.env.example
+*service-account*.json
+*-key.json
+keys/
+secrets/
+profiles.yml
+
+# --- dbt ---
+target/
+logs/
+dbt_packages/
+.user.yml
+
+# --- Python ---
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+*.egg-info/
+.dlt/secrets.toml
+.dlt/.var/
+
+# --- Generated data ---
+data/
+*.tsv
+*.bcp.err
+
+# --- Power BI local artefacts ---
+**/.pbi/localSettings.json
+**/.pbi/cache.abf
+
+# --- OS / editor ---
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
