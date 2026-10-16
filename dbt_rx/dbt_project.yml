@@ -1,0 +1,42 @@
+name: dbt_rx
+version: "1.0.0"
+profile: dbt_rx
+
+model-paths: ["models"]
+macro-paths: ["macros"]
+snapshot-paths: ["snapshots"]
+test-paths: ["tests"]
+analysis-paths: ["analyses"]
+seed-paths: ["seeds"]
+clean-targets: ["target", "dbt_packages"]
+
+vars:
+  raw_dataset: raw_rx              # BigQuery dataset loaded by the dlt pipeline (Phase 2)
+  late_arrival_days: 30            # a line reaching the source later than this is a late arrival
+  actual_cost_to_nic_ratio: 0.92   # used only to impute a missing actual_cost (flagged)
+  incremental_lookback_hours: 1    # re-process this window behind the fact's max(updated_at)
+  date_spine_start: "2022-01-01"
+  date_spine_end: "2027-01-01"     # exclusive
+
+models:
+  dbt_rx:
+    +persist_docs:                 # descriptions also land in BigQuery (and show up in Power BI)
+      relation: true
+      columns: true
+    staging:
+      +materialized: view
+      +schema: stg_rx
+    intermediate:
+      +materialized: view
+      +schema: int_rx
+    marts:
+      +materialized: table
+      +schema: marts_rx
+
+snapshots:
+  dbt_rx:
+    +schema: snapshots_rx
+
+data_tests:
+  dbt_rx:
+    +severity: error

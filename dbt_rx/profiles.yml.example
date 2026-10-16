@@ -1,0 +1,30 @@
+# Copy to %USERPROFILE%\.dbt\profiles.yml (outside the repo). No secrets here:
+# everything comes from environment variables (see ../.env.example).
+dbt_rx:
+  target: prod
+  outputs:
+    prod:
+      type: bigquery
+      method: service-account
+      keyfile: "{{ env_var('GOOGLE_APPLICATION_CREDENTIALS') }}"
+      project: "{{ env_var('GCP_PROJECT_ID') }}"
+      dataset: marts_rx              # fallback only: every layer sets its own dataset
+      location: "{{ env_var('BIGQUERY_LOCATION', 'EU') }}"
+      threads: 4
+      priority: interactive
+      job_execution_timeout_seconds: 600
+      job_retries: 2
+      maximum_bytes_billed: 5000000000   # 5 GB per query: a runaway query fails instead of billing
+
+    ci:                              # GitHub Actions (Phase 4): isolated ci_* datasets per run
+      type: bigquery
+      method: service-account
+      keyfile: "{{ env_var('GOOGLE_APPLICATION_CREDENTIALS') }}"
+      project: "{{ env_var('GCP_PROJECT_ID') }}"
+      dataset: "{{ env_var('DBT_CI_DATASET', 'ci_rx') }}"
+      location: "{{ env_var('BIGQUERY_LOCATION', 'EU') }}"
+      threads: 4
+      priority: interactive
+      job_execution_timeout_seconds: 600
+      job_retries: 2
+      maximum_bytes_billed: 5000000000
