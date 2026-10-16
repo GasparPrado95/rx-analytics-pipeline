@@ -1,0 +1,16 @@
+[project]
+name = "rx-analytics-pipeline"
+version = "0.1.0"
+description = "Synthetic NHS prescribing analytics: SQL Server -> BigQuery -> dbt -> Power BI"
+requires-python = ">=3.11,<3.13"
+
+[tool.ruff]
+line-length = 120
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP", "SIM"]
+ignore = ["E702"]  # allow compact parallel appends in the catalogue builder
+
+[tool.ruff.lint.per-file-ignores]
+"generator/reference_data.py" = ["E501"]  # one medicine per line reads better than wrapped tuples
