@@ -19,7 +19,7 @@ $repo = Split-Path -Parent $PSScriptRoot
 $python = Join-Path $repo '.venv\Scripts\python.exe'
 
 if (-not (Test-Path $python)) {
-    Write-Error "Virtual environment not found at $python. See README > Setup."
+    Write-Error "Virtual environment not found at $python. See README > Run it from a clean machine."
     exit 2
 }
 
