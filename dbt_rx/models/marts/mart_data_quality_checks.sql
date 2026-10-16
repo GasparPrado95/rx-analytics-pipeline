@@ -40,28 +40,50 @@ checks as (
             lines.duplicate_submission as affected_rows, lines.total as total_rows,
             'Removed from the fact (earliest arrival kept)' as handling
         ),
-        struct('Late-arriving lines', 'Prescription lines', lines.late_arrival, lines.total,
-               'Loaded via the updated_at watermark and merged into their dispensing month'),
-        struct('Restated lines', 'Prescription lines', lines.restated, lines.total,
-               'Latest version merged on item_line_id'),
-        struct('Credit lines (negative)', 'Prescription lines', lines.credit, lines.total,
-               'Kept with negative items and cost; flagged is_credit'),
-        struct('Missing net ingredient cost', 'Prescription lines', lines.nic_imputed, lines.total,
-               'Imputed as quantity x tariff price at dispensing date; flagged'),
-        struct('Missing actual cost', 'Prescription lines', lines.actual_cost_imputed, lines.total,
-               'Imputed from net ingredient cost; flagged'),
-        struct('Missing quantity', 'Prescription lines', lines.quantity_missing, lines.total,
-               'Kept; excluded from quantity-based measures'),
-        struct('No tariff price at dispensing date', 'Prescription lines', lines.no_tariff_price, lines.total,
-               'Expected to be zero; covered by a test'),
-        struct('Non-standard sex code', 'Patients', pt.sex_nonstandard, pt.total,
-               'Upper-cased; anything other than F/M mapped to U'),
-        struct('Missing deprivation decile', 'Patients', pt.imd_missing, pt.total,
-               'Kept as an Unknown band'),
-        struct('Missing postcode district', 'Practices', pr.postcode_missing, pr.total,
-               'Kept; the practice cannot be placed on a map'),
-        struct('Non-standard rural/urban value', 'Practices', pr.rural_urban_nonstandard, pr.total,
-               'Trimmed and title-cased')
+        struct(
+            'Late-arriving lines', 'Prescription lines', lines.late_arrival, lines.total,
+            'Loaded via the updated_at watermark and merged into their dispensing month'
+        ),
+        struct(
+            'Restated lines', 'Prescription lines', lines.restated, lines.total,
+            'Latest version merged on item_line_id'
+        ),
+        struct(
+            'Credit lines (negative)', 'Prescription lines', lines.credit, lines.total,
+            'Kept with negative items and cost; flagged is_credit'
+        ),
+        struct(
+            'Missing net ingredient cost', 'Prescription lines', lines.nic_imputed, lines.total,
+            'Imputed as quantity x tariff price at dispensing date; flagged'
+        ),
+        struct(
+            'Missing actual cost', 'Prescription lines', lines.actual_cost_imputed, lines.total,
+            'Imputed from net ingredient cost; flagged'
+        ),
+        struct(
+            'Missing quantity', 'Prescription lines', lines.quantity_missing, lines.total,
+            'Kept; excluded from quantity-based measures'
+        ),
+        struct(
+            'No tariff price at dispensing date', 'Prescription lines', lines.no_tariff_price, lines.total,
+            'Expected to be zero; covered by a test'
+        ),
+        struct(
+            'Non-standard sex code', 'Patients', pt.sex_nonstandard, pt.total,
+            'Upper-cased; anything other than F/M mapped to U'
+        ),
+        struct(
+            'Missing deprivation decile', 'Patients', pt.imd_missing, pt.total,
+            'Kept as an Unknown band'
+        ),
+        struct(
+            'Missing postcode district', 'Practices', pr.postcode_missing, pr.total,
+            'Kept; the practice cannot be placed on a map'
+        ),
+        struct(
+            'Non-standard rural/urban value', 'Practices', pr.rural_urban_nonstandard, pr.total,
+            'Trimmed and title-cased'
+        )
     ]) as c
 )
 

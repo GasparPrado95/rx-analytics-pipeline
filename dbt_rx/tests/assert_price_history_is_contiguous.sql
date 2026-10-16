@@ -12,4 +12,4 @@ with ordered as (
 select *
 from ordered
 where (next_from is not null and date_add(effective_to, interval 1 day) != next_from)
-   or (next_from is null and effective_to != date '9999-12-31')
+    or (next_from is null and effective_to != date '9999-12-31')

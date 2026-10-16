@@ -13,7 +13,11 @@ prices as (
 ),
 
 medicines as (
-    select presentation_code, is_generic, generic_equivalent_code, pack_quantity
+    select
+        presentation_code,
+        is_generic,
+        generic_equivalent_code,
+        pack_quantity
     from {{ ref('stg_rx__medicines') }}
 ),
 
@@ -27,13 +31,13 @@ priced as (
         gp.unit_cost as generic_tariff_unit_cost
     from items as i
     inner join medicines as m
-        on m.presentation_code = i.presentation_code
+        on i.presentation_code = m.presentation_code
     left join prices as p
-        on p.presentation_code = i.presentation_code
-        and i.dispensing_date between p.effective_from and p.effective_to
+        on i.presentation_code = p.presentation_code
+            and i.dispensing_date between p.effective_from and p.effective_to
     left join prices as gp
-        on gp.presentation_code = m.generic_equivalent_code
-        and i.dispensing_date between gp.effective_from and gp.effective_to
+        on m.generic_equivalent_code = gp.presentation_code
+            and i.dispensing_date between gp.effective_from and gp.effective_to
 ),
 
 filled as (

@@ -1,7 +1,10 @@
 -- Privacy by design: the marts never expose patient_id. Facts link to a band
 -- (age band x sex x deprivation decile) instead of an individual.
 with bands as (
-    select distinct age_band, sex, imd_decile
+    select distinct
+        age_band,
+        sex,
+        imd_decile
     from {{ ref('stg_rx__patients') }}
 )
 

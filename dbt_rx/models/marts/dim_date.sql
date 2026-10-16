@@ -28,9 +28,9 @@ select
     case
         when extract(month from date_day) >= 4
             then concat(
-                cast(extract(year from date_day) as string), '/',
-                format_date('%y', date_add(date_day, interval 1 year))
-            )
+                    cast(extract(year from date_day) as string), '/',
+                    format_date('%y', date_add(date_day, interval 1 year))
+                )
         else concat(cast(extract(year from date_day) - 1 as string), '/', format_date('%y', date_day))
     end as nhs_financial_year,
     div(mod(extract(month from date_day) + 8, 12), 3) + 1 as nhs_financial_quarter,

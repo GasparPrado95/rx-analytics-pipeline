@@ -64,4 +64,4 @@ select
         as generic_prescribing_rate,
     round(safe_divide(m.generic_items, m.total_items), 4) as generic_items_share
 from monthly as m
-inner join list_sizes as l on l.icb_code = m.icb_code
+inner join list_sizes as l on m.icb_code = l.icb_code
