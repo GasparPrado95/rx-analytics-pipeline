@@ -1,0 +1,47 @@
+# Extract & load configuration: RxSource (SQL Server) -> BigQuery raw_rx.
+#
+# mode: full         -> write_disposition replace (small reference tables, reloaded each run)
+# mode: incremental  -> write_disposition merge on primary_key, filtered by a high-watermark
+#                       on `cursor`. updated_at is used (not dispensing_date) so late-arriving
+#                       and restated rows are picked up.
+
+pipeline:
+  name: rx_el
+  dataset: raw_rx
+  source_schema: rx
+  backend: pyarrow        # SQLAlchemy -> Arrow batches -> Parquet: fast, keeps decimals exact
+  chunk_size: 100000
+  loader_file_format: parquet  # BigQuery batch load jobs are free; streaming inserts are not
+  # Incremental tables re-read this many seconds behind the watermark. Catches source transactions
+  # that commit late with older timestamps; the merge on primary_key makes the re-read idempotent.
+  lag_seconds: 300
+
+retry:
+  attempts: 3
+  initial_wait_seconds: 10
+  max_wait_seconds: 120
+
+tables:
+  # --- reference / dimensions: full reload ---
+  - {name: region,                 mode: full, primary_key: region_code}
+  - {name: icb,                    mode: full, primary_key: icb_code}
+  - {name: practice,               mode: full, primary_key: practice_code}
+  - {name: prescriber_type,        mode: full, primary_key: prescriber_type_code}
+  - {name: prescriber,             mode: full, primary_key: prescriber_id}
+  - {name: bnf_chapter,            mode: full, primary_key: chapter_code}
+  - {name: bnf_section,            mode: full, primary_key: section_code}
+  - {name: bnf_paragraph,          mode: full, primary_key: paragraph_code}
+  - {name: bnf_chemical,           mode: full, primary_key: chemical_code}
+  - {name: medicine,               mode: full, primary_key: presentation_code}
+  - {name: medicine_price_history, mode: full, primary_key: [presentation_code, effective_from]}
+  - {name: patient,                mode: full, primary_key: patient_id}
+
+  # --- transactions: incremental merge on updated_at ---
+  - name: prescription
+    mode: incremental
+    primary_key: prescription_id
+    cursor: updated_at
+  - name: prescription_item
+    mode: incremental
+    primary_key: item_line_id
+    cursor: updated_at
