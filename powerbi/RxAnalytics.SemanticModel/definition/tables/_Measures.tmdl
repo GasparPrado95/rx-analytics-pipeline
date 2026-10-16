@@ -9,7 +9,7 @@ table _Measures
 
 		formatStringDefinition =
 				VAR v = SELECTEDMEASURE ()
-				RETURN SWITCH ( TRUE (), ABS ( v ) >= 1000000, "#,0.00,,""M""", ABS ( v ) >= 10000, "#,0.0,""K""", "#,0" )
+				RETURN SWITCH ( TRUE (), ABS ( v ) >= 1000000, "#,0,,.00""M""", ABS ( v ) >= 10000, "#,0,.0""K""", "#,0" )
 
 	/// Dispensed prescription lines after removing double submissions.
 	measure 'Prescription Lines' = COUNTROWS ( Prescriptions )
@@ -30,7 +30,7 @@ table _Measures
 
 		formatStringDefinition =
 				VAR v = SELECTEDMEASURE ()
-				RETURN SWITCH ( TRUE (), ABS ( v ) >= 1000000, "£#,0.0,,""M""", ABS ( v ) >= 10000, "£#,0.0,""K""", "£#,0" )
+				RETURN SWITCH ( TRUE (), ABS ( v ) >= 1000000, "£#,0,,.0""M""", ABS ( v ) >= 10000, "£#,0,.0""K""", "£#,0" )
 
 	/// Actual cost (GBP) after discounts and fees.
 	measure 'Actual Cost' = SUM ( Prescriptions[Actual Cost] )
@@ -39,7 +39,7 @@ table _Measures
 
 		formatStringDefinition =
 				VAR v = SELECTEDMEASURE ()
-				RETURN SWITCH ( TRUE (), ABS ( v ) >= 1000000, "£#,0.0,,""M""", ABS ( v ) >= 10000, "£#,0.0,""K""", "£#,0" )
+				RETURN SWITCH ( TRUE (), ABS ( v ) >= 1000000, "£#,0,,.0""M""", ABS ( v ) >= 10000, "£#,0,.0""K""", "£#,0" )
 
 	/// Net ingredient cost per item dispensed.
 	measure 'Cost per Item' = DIVIDE ( [Total Cost], [Total Items] )
@@ -117,7 +117,7 @@ table _Measures
 
 		formatStringDefinition =
 				VAR v = SELECTEDMEASURE ()
-				RETURN SWITCH ( TRUE (), ABS ( v ) >= 1000000, "£#,0.0,,""M""", ABS ( v ) >= 10000, "£#,0.0,""K""", "£#,0" )
+				RETURN SWITCH ( TRUE (), ABS ( v ) >= 1000000, "£#,0,,.0""M""", ABS ( v ) >= 10000, "£#,0,.0""K""", "£#,0" )
 
 	/// Saving had branded lines with a generic equivalent been dispensed as the generic, at prices on the dispensing date.
 	measure 'Potential Generic Saving' = SUM ( Prescriptions[Potential Generic Saving] )
@@ -126,7 +126,7 @@ table _Measures
 
 		formatStringDefinition =
 				VAR v = SELECTEDMEASURE ()
-				RETURN SWITCH ( TRUE (), ABS ( v ) >= 1000000, "£#,0.0,,""M""", ABS ( v ) >= 10000, "£#,0.0,""K""", "£#,0" )
+				RETURN SWITCH ( TRUE (), ABS ( v ) >= 1000000, "£#,0,,.0""M""", ABS ( v ) >= 10000, "£#,0,.0""K""", "£#,0" )
 
 	/// Share of avoidable branded spend.
 	measure 'Saving % of Branded Cost' = DIVIDE ( [Potential Generic Saving], [Branded Cost Where Generic Available] )
@@ -141,7 +141,7 @@ table _Measures
 
 		formatStringDefinition =
 				VAR v = SELECTEDMEASURE ()
-				RETURN SWITCH ( TRUE (), ABS ( v ) >= 1000000, "#,0.00,,""M""", ABS ( v ) >= 10000, "#,0.0,""K""", "#,0" )
+				RETURN SWITCH ( TRUE (), ABS ( v ) >= 1000000, "#,0,,.00""M""", ABS ( v ) >= 10000, "#,0,.0""K""", "#,0" )
 
 	/// Change in items versus the same period last year.
 	measure 'Items YoY %' =
@@ -158,7 +158,7 @@ table _Measures
 
 		formatStringDefinition =
 				VAR v = SELECTEDMEASURE ()
-				RETURN SWITCH ( TRUE (), ABS ( v ) >= 1000000, "£#,0.0,,""M""", ABS ( v ) >= 10000, "£#,0.0,""K""", "£#,0" )
+				RETURN SWITCH ( TRUE (), ABS ( v ) >= 1000000, "£#,0,,.0""M""", ABS ( v ) >= 10000, "£#,0,.0""K""", "£#,0" )
 
 	/// Change in net ingredient cost versus the same period last year.
 	measure 'Cost YoY %' =
@@ -186,7 +186,7 @@ table _Measures
 
 		formatStringDefinition =
 				VAR v = SELECTEDMEASURE ()
-				RETURN SWITCH ( TRUE (), ABS ( v ) >= 1000000, "#,0.00,,""M""", ABS ( v ) >= 10000, "#,0.0,""K""", "#,0" )
+				RETURN SWITCH ( TRUE (), ABS ( v ) >= 1000000, "#,0,,.00""M""", ABS ( v ) >= 10000, "#,0,.0""K""", "#,0" )
 
 	/// Net ingredient cost in the 12 months to the end of the period in context (blank until 12 months of data exist).
 	measure 'Cost Rolling 12M' =
@@ -198,7 +198,7 @@ table _Measures
 
 		formatStringDefinition =
 				VAR v = SELECTEDMEASURE ()
-				RETURN SWITCH ( TRUE (), ABS ( v ) >= 1000000, "£#,0.0,,""M""", ABS ( v ) >= 10000, "£#,0.0,""K""", "£#,0" )
+				RETURN SWITCH ( TRUE (), ABS ( v ) >= 1000000, "£#,0,,.0""M""", ABS ( v ) >= 10000, "£#,0,.0""K""", "£#,0" )
 
 	/// Generic prescribing rate over the 12 months to the end of the period in context.
 	measure 'Generic % Rolling 12M' =
@@ -274,7 +274,7 @@ table _Measures
 	/// Outcome of the most recent EL run.
 	measure 'Last EL Run Status' =
 			VAR failedTables = CALCULATE ( COUNTROWS ( 'Pipeline Runs' ), KEEPFILTERS ( 'Pipeline Runs'[Is Latest Run] = TRUE () ), KEEPFILTERS ( 'Pipeline Runs'[Status] = "failed" ) )
-			RETURN IF ( failedTables > 0, "Failed", "Succeeded" )
+			RETURN IF ( NOT ISBLANK ( [Last EL Run] ), IF ( failedTables > 0, "Failed", "Succeeded" ) )
 		displayFolder: Pipeline
 		lineageTag: b7f0d071-a20f-481d-85ba-d6759cd33b2e
 

@@ -145,8 +145,8 @@ table Prescriptions
 		sourceColumn: is_actual_cost_imputed
 
 	column 'Arrival Lag Band Order' =
-			VAR lag = Prescriptions[Arrival Lag Days]
-			RETURN SWITCH(TRUE(), lag <= 7, 1, lag <= 14, 2, lag <= 30, 3, lag <= 90, 4, 5)
+			VAR lagDays = Prescriptions[Arrival Lag Days]
+			RETURN SWITCH ( TRUE (), lagDays <= 7, 1, lagDays <= 14, 2, lagDays <= 30, 3, lagDays <= 90, 4, 5 )
 		dataType: int64
 		isHidden
 		formatString: 0
@@ -155,8 +155,8 @@ table Prescriptions
 
 	/// Days between dispensing and the line reaching the source system, banded. Over 30 days counts as a late arrival.
 	column 'Arrival Lag Band' =
-			VAR lag = Prescriptions[Arrival Lag Days]
-			RETURN SWITCH(TRUE(), lag <= 7, "0-7 days", lag <= 14, "8-14 days", lag <= 30, "15-30 days", lag <= 90, "31-90 days (late)", "Over 90 days (late)")
+			VAR lagDays = Prescriptions[Arrival Lag Days]
+			RETURN SWITCH ( TRUE (), lagDays <= 7, "0-7 days", lagDays <= 14, "8-14 days", lagDays <= 30, "15-30 days", lagDays <= 90, "31-90 days (late)", "Over 90 days (late)" )
 		dataType: string
 		displayFolder: Flags
 		lineageTag: 147b45d5-efd1-4f42-8713-a864d7026c20
@@ -167,7 +167,9 @@ table Prescriptions
 		mode: import
 		source =
 				let
-				    Source = GoogleBigQuery.Database([BillingProject = #"GCP Project"]),
+				    // UseStorageApi = false: Power BI's BigQuery driver fails to authenticate the Storage Read API
+				    // with service-account login, and only large results (this table) use it.
+				    Source = GoogleBigQuery.Database([BillingProject = #"GCP Project", UseStorageApi = false]),
 				    Dataset = Source{[Name = #"GCP Project"]}[Data]{[Name = "marts_rx", Kind = "Schema"]}[Data],
 				    Data = Dataset{[Name = "fct_prescription_items", Kind = "Table"]}[Data],
 				    Selected = Table.SelectColumns(Data, {"dispensing_date", "presentation_code", "practice_code", "prescriber_id", "patient_band_key", "items", "quantity", "net_ingredient_cost", "actual_cost", "potential_generic_saving", "arrival_lag_days", "is_generic", "generic_available", "is_credit", "is_late_arrival", "is_restated", "is_nic_imputed", "is_actual_cost_imputed"})

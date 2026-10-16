@@ -2,3 +2,6 @@
 expression 'GCP Project' = "rx-analytics-pipeline" meta [IsParameterQuery=true, Type="Text", IsParameterQueryRequired=true]
 	lineageTag: 2f10b218-4c67-4c68-a2e6-649de05d2e4c
 
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Text
