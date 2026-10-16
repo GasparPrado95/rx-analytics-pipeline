@@ -39,3 +39,8 @@ data/
 Thumbs.db
 .vscode/
 .idea/
+
+# --- CI / Pages artefacts ---
+.dbt-ci/
+site/
+gha-creds-*.json

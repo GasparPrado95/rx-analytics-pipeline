@@ -1,0 +1,114 @@
+# CI on pull requests: Python lint + tests, dbt SQL lint, and a full `dbt build` in isolated
+# BigQuery datasets (ci_pr<N>_*), which are dropped afterwards.
+#
+# Trade-off: GitHub-hosted runners cannot reach the local SQL Server, so CI covers dbt and Python
+# only. dbt builds from the prod raw_rx dataset (read-only); the EL step is exercised by unit tests
+# and by the local orchestrator, not in CI.
+#
+# Required repo settings:
+#   secret   GCP_SA_KEY      JSON key of the CI service account (BigQuery Data Editor + Job User)
+#   variable GCP_PROJECT_ID  e.g. rx-analytics-pipeline
+
+name: CI
+
+on:
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+env:
+  PYTHON_VERSION: "3.12"
+
+jobs:
+  python:
+    name: Python - ruff + pytest
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-python@v7
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: pip
+          cache-dependency-path: requirements*.txt
+
+      - name: Install ODBC driver manager (pyodbc import)
+        run: sudo apt-get update -q && sudo apt-get install -y -q --no-install-recommends unixodbc
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt -r requirements-dev.txt
+
+      - name: Lint (ruff)
+        run: ruff check . --output-format github
+
+      - name: Unit tests (pytest)
+        run: pytest -q
+
+  dbt:
+    name: dbt - sqlfluff + build on BigQuery CI datasets
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      GCP_PROJECT_ID: ${{ vars.GCP_PROJECT_ID }}
+      BIGQUERY_LOCATION: EU
+      DBT_CI_DATASET: ci_pr${{ github.event.pull_request.number || github.run_id }}
+      DBT_PROFILES_DIR: ${{ github.workspace }}/.dbt-ci
+    defaults:
+      run:
+        working-directory: dbt_rx
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-python@v7
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: pip
+          cache-dependency-path: requirements*.txt
+
+      - name: Install dependencies
+        run: pip install -r ../requirements.txt -r ../requirements-dev.txt
+
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v3
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+      - name: dbt profile (from the committed template, no secrets in it)
+        run: mkdir -p "$DBT_PROFILES_DIR" && cp profiles.yml.example "$DBT_PROFILES_DIR/profiles.yml"
+
+      - name: dbt deps
+        run: dbt deps
+
+      - name: Lint SQL (sqlfluff, dbt templater)
+        run: sqlfluff lint models tests --format github-annotation-native
+
+      - name: dbt build (models, snapshot, tests) into ${{ env.DBT_CI_DATASET }}_*
+        run: dbt build --target ci
+
+      - name: Source freshness (informational in CI)
+        continue-on-error: true
+        run: dbt source freshness --target ci
+
+      - name: Upload dbt artifacts
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: dbt-artifacts
+          path: |
+            dbt_rx/target/run_results.json
+            dbt_rx/target/manifest.json
+            dbt_rx/logs/dbt.log
+          if-no-files-found: ignore
+
+      - name: Drop CI datasets
+        if: always()
+        working-directory: .
+        run: python scripts/drop_ci_datasets.py --prefix "$DBT_CI_DATASET"
