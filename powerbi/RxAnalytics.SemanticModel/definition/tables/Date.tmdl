@@ -12,6 +12,8 @@ table Date
 		summarizeBy: none
 		sourceColumn: date_day
 
+		annotation UnderlyingDateTimeDataType = Date
+
 	column Year
 		dataType: int64
 		formatString: 0
@@ -61,6 +63,8 @@ table Date
 		summarizeBy: none
 		sourceColumn: month_start
 
+		annotation UnderlyingDateTimeDataType = Date
+
 	column 'Week Start'
 		dataType: dateTime
 		isHidden
@@ -68,6 +72,8 @@ table Date
 		lineageTag: a48bf709-0dbf-416f-a795-502ab672bf05
 		summarizeBy: none
 		sourceColumn: week_start
+
+		annotation UnderlyingDateTimeDataType = Date
 
 	column 'NHS Financial Year'
 		dataType: string
@@ -94,6 +100,23 @@ table Date
 		lineageTag: 0d08d25a-880b-4773-81d7-756ec0a63914
 		summarizeBy: none
 		sourceColumn: is_weekend
+
+	column iso_week
+		dataType: int64
+		formatString: 0
+		lineageTag: b3e35844-5832-40e7-8c56-7d5012cc43a6
+		summarizeBy: none
+		sourceColumn: iso_week
+
+		annotation SummarizationSetBy = Automatic
+
+	column day_name
+		dataType: string
+		lineageTag: 6a446975-6751-4507-ab1f-5f79ed538383
+		summarizeBy: none
+		sourceColumn: day_name
+
+		annotation SummarizationSetBy = Automatic
 
 	partition Date = m
 		mode: import

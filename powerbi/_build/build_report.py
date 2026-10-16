@@ -112,7 +112,7 @@ def theme() -> dict:
 
 # ------------------------------------------------------------------ page chrome
 PAGES = [("overview", "Overview"), ("regions", "Regions"), ("medicines", "Medicines"),
-         ("savings", "Generic Savings"), ("quality", "Data Quality")]
+         ("savings", "Savings"), ("quality", "Data Quality")]
 TITLES = {
     "overview": ("Executive overview", "Volume, cost and generic prescribing at a glance"),
     "regions": ("Regional variation", "Prescribing rates per 1,000 registered patients by region, ICB and deprivation"),
@@ -193,11 +193,26 @@ COVER_BG = "#24123A"      # deeper than the header band so the photo and tiles s
 COVER_TILE = "#341E50"
 CONTENTS = [
     ("overview", "Executive overview", "Volume, cost, cost per item and generic prescribing, with year-on-year change"),
-    ("regions", "Regional variation", "Items per 1,000 patients by region, ICB, postcode district and deprivation"),
+    ("regions", "Regional variation", "Items per 1,000 patients by region, ICB and practice deprivation"),
     ("medicines", "Medicines & BNF drill-down", "Chapter to presentation: where items and money go, and seasonality"),
     ("savings", "Generic vs branded", "Savings available where a generic exists, by medicine and over time"),
     ("quality", "Data quality & pipeline health", "Defects found and fixed by dbt, late arrivals and EL run history"),
 ]
+
+
+def widths(ws: dict[str, int], wrap: bool = True) -> dict:
+    """Explicit column widths (keyed by queryRef, e.g. 'Medicine.Presentation') plus word wrap."""
+    objs = {"columnWidth": [{"properties": {"value": lit(f"{w}D")}, "selector": {"metadata": ref}}
+                            for ref, w in ws.items()]}
+    if wrap:
+        objs["values"] = [{"properties": {"wordWrap": lit("true")}}]
+        objs["columnHeaders"] = [{"properties": {"wordWrap": lit("true")}}]
+    return objs
+
+
+def labelled_bars(extra: dict | None = None) -> dict:
+    """Bars carry data labels, so the value axis is redundant: hiding it frees room for every bar."""
+    return {**labels_on(), "valueAxis": [{"properties": {"show": lit("false")}}], **(extra or {})}
 
 
 def cover() -> Page:
@@ -205,33 +220,34 @@ def cover() -> Page:
     image(p, 760, 0, 520, 720, COVER_IMG, scaling="Fill")
     text(p, 744, 0, 16, 720, [[(" ", 1, GOLD_RULE, SANS)]], bg=GOLD_RULE)
     text(p, 0, 0, 10, 720, [[(" ", 1, GOLD_RULE, SANS)]], bg=GOLD_RULE)
-    text(p, 64, 54, 660, 26, [[("NHS ENGLAND PRIMARY CARE   |   PRESCRIBING ANALYTICS", 10, GOLD_RULE, SANS_BOLD)]])
-    text(p, 64, 80, 670, 120, [[("Prescribing", 40, INK_ON_DARK, SERIF)],
-                               [("Analytics Dashboard", 40, INK_ON_DARK, "Segoe UI Light")]])
-    text(p, 64, 204, 140, 4, [[(" ", 1, GOLD_RULE, SANS)]], bg=GOLD_RULE)
-    text(p, 64, 218, 660, 56, [
+    text(p, 64, 48, 660, 26, [[("NHS ENGLAND PRIMARY CARE   |   PRESCRIBING ANALYTICS", 10, GOLD_RULE, SANS_BOLD)]])
+    text(p, 64, 72, 670, 150, [[("Prescribing", 38, INK_ON_DARK, SERIF)],
+                               [("Analytics Dashboard", 38, INK_ON_DARK, "Segoe UI Light")]])
+    text(p, 64, 226, 140, 4, [[(" ", 1, GOLD_RULE, SANS)]], bg=GOLD_RULE)
+    text(p, 64, 238, 670, 56, [
         [("2.5 million prescription lines from 400 GP practices in 42 Integrated Care Boards, 2023 to 2025:", 11,
           MUTED_ON_DARK, SANS)],
         [("SQL Server to BigQuery with dlt, modelled in dbt, analysed here.", 11, MUTED_ON_DARK, SANS)]])
-    text(p, 64, 282, 360, 22, [[("CONTENTS   (click to open; Ctrl+click while editing)", 8.5, "#A893C4", SANS)]])
-    y = 306
+    text(p, 64, 296, 360, 22, [[("CONTENTS   (click to open; Ctrl+click while editing)", 8.5, "#A893C4", SANS)]])
+    y = 318
     for i, (pid, title, desc) in enumerate(CONTENTS, 1):
         text(p, 64, y + 2, 44, 40, [[(f"{i:02d}", 18, GOLD_RULE, "Segoe UI Light")]])
         nav_button(p, 104, y, 470, 26, pid, f"{title}   ›", INK_ON_DARK, hover=COVER_TILE, size=12.5, font=SANS_BOLD)
         text(p, 112, y + 26, 620, 18, [[(desc, 9, "#A893C4", SANS)]])
-        y += 48
+        y += 46
     tile = {**no_chrome(COVER_TILE), "border": [{"properties": {"show": lit("true"), "color": color("#4A2E66"),
                                                                 "radius": lit("8D")}}]}
     for i, (m, label) in enumerate([("Total Items", "Items dispensed"), ("Total Cost", "Net ingredient cost"),
                                     ("Generic %", "Generic prescribing rate"),
                                     ("Potential Generic Saving", "Potential generic saving")]):
-        card(p, 64 + i * 166, 562, 154, 80, m, label, value_color=INK_ON_DARK, label_color=GOLD_RULE, size=18,
+        card(p, 64 + i * 166, 556, 154, 80, m, label, value_color=INK_ON_DARK, label_color=GOLD_RULE, size=18,
              font="Segoe UI Light", container=tile)
-    text(p, 64, 656, 500, 48, [
+    text(p, 64, 646, 520, 62, [
         [("Portfolio project by Gaspar Prado   |   dlt · BigQuery · dbt · Power BI", 8.5, "#A893C4", SANS)],
-        [("All data is synthetic: no real patients, prescribers or practices. Cover photo: apothecary bottles, "
-          "Sherbrooke Village Museum, by France3470 (public domain).", 8, "#A893C4", SANS)]])
-    card(p, 572, 662, 156, 28, "Data Through", "Data through", value_color=GOLD_RULE, size=9, font=SANS_BOLD,
+        [("All data is synthetic: no real patients, prescribers or practices.", 8, "#A893C4", SANS)],
+        [("Cover photo: apothecary bottles, Sherbrooke Village Museum, by France3470 (public domain).", 8,
+          "#A893C4", SANS)]])
+    card(p, 592, 648, 136, 24, "Data Through", "Data through", value_color=GOLD_RULE, size=9, font=SANS_BOLD,
          show_label=False, container=no_chrome())
     return p
 
@@ -240,23 +256,24 @@ def overview() -> Page:
     p = Page("overview", "Overview")
     header(p, "overview")
     slicers(p, ["year", "region", "chapter"])
-    text(p, 880, 86, 376, 40, [[("Rates are monthly averages per 1,000 registered patients. "
-                                 "Change figures compare with the same period a year earlier.", 8, INK_2, SANS)]])
-    kpi_row(p, 136, 84, [("Total Items", "Items dispensed"), ("Total Cost", "Net ingredient cost"),
+    text(p, 880, 84, 376, 44, [[("Rates are monthly averages per 1,000 registered patients. Change figures compare "
+                                 "the latest year in the selection with the year before.", 8, INK_2, SANS)]])
+    kpi_row(p, 140, 84, [("Total Items", "Items dispensed"), ("Total Cost", "Net ingredient cost"),
                          ("Cost per Item", "Cost per item"), ("Items per 1,000 Patients", "Items per 1,000 patients / month"),
                          ("Generic %", "Generic prescribing rate")])
-    kpi_row(p, 226, 46, [("Items YoY %", "vs prior year"), ("Cost YoY %", "vs prior year"), (None, None), (None, None),
-                         ("Generic % Change vs PY", "vs prior year")], size=12)
+    kpi_row(p, 230, 58, [("Items YoY %", "Latest year vs prior year"), ("Cost YoY %", "Latest year vs prior year"),
+                         (None, None), (None, None), ("Generic % Change vs PY", "Latest year vs prior year")], size=13)
     month = col("Date", "Month Start", "Month")
-    chart(p, "lineChart", 24, 284, 608, 210, "Items dispensed per month",
+    chart(p, "lineChart", 24, 300, 608, 200, "Items dispensed per month",
           {"Category": [month], "Y": [mea("Total Items", "Items")]})
-    chart(p, "lineChart", 644, 284, 612, 210, "Net ingredient cost, rolling 12 months",
+    chart(p, "lineChart", 644, 300, 612, 200, "Net ingredient cost, rolling 12 months",
           {"Category": [month], "Y": [mea("Cost Rolling 12M", "Cost (rolling 12 months)")]}, objects=series_color(GOLD))
     chapter = col("Medicine", "BNF Chapter", "BNF chapter")
     items = mea("Total Items", "Items")
-    chart(p, "clusteredBarChart", 24, 506, 608, 190, "Items by BNF chapter",
-          {"Category": [chapter], "Y": [items]}, objects=labels_on(), sort=sort_by(items))
-    chart(p, "lineChart", 644, 506, 612, 190, "Generic prescribing rate per month",
+    chart(p, "clusteredBarChart", 24, 512, 608, 184, "Top 5 BNF chapters by items",
+          {"Category": [chapter], "Y": [items]}, objects=labelled_bars(), sort=sort_by(items),
+          filters=[topn_filter("top5chap", "Medicine", "BNF Chapter", "Total Items", 5)])
+    chart(p, "lineChart", 644, 512, 612, 184, "Generic prescribing rate per month",
           {"Category": [month], "Y": [mea("Generic %", "Generic prescribing rate")]})
     return p
 
@@ -265,24 +282,29 @@ def regions() -> Page:
     p = Page("regions", "Regions")
     header(p, "regions")
     slicers(p, ["year", "chapter"])
-    kpi_row(p, 136, 80, [("Items per 1,000 Patients", "Items per 1,000 patients / month"),
+    kpi_row(p, 140, 80, [("Items per 1,000 Patients", "Items per 1,000 patients / month"),
                          ("Cost per 1,000 Patients", "Cost per 1,000 patients / month"),
                          ("Antibacterial Items per 1,000 Patients", "Antibacterial items per 1,000 / month"),
                          ("Registered Patients", "Registered patients (panel)")])
     rate = mea("Items per 1,000 Patients", "Items per 1,000 patients")
-    chart(p, "clusteredBarChart", 24, 228, 400, 222, "Items per 1,000 patients by NHS region",
-          {"Category": [col("Practice", "Region")], "Y": [rate]}, objects=labels_on(), sort=sort_by(rate))
+    chart(p, "clusteredBarChart", 24, 232, 380, 236, "Items per 1,000 patients by NHS region",
+          {"Category": [col("Practice", "Region")], "Y": [rate]}, objects=labelled_bars(), sort=sort_by(rate))
     quint = col("Practice", "Deprivation Quintile", "Deprivation quintile")
-    chart(p, "clusteredColumnChart", 24, 462, 400, 234, "Items per 1,000 patients by practice deprivation",
-          {"Category": [quint], "Y": [rate]}, objects=labels_on(), sort=sort_by(quint, desc=False))
-    chart(p, "map", 436, 228, 360, 468, "Practices by postcode district (bubble = items)",
-          {"Category": [col("Practice", "Postcode District")], "Size": [mea("Total Items", "Items")],
-           "Tooltips": [rate]}, objects={"dataPoint": [{"properties": {"defaultColor": color(PLUM)}}]})
-    chart(p, "pivotTable", 808, 228, 448, 468, "Region and ICB comparison",
+    chart(p, "clusteredColumnChart", 24, 480, 380, 216, "Items per 1,000 patients by practice deprivation",
+          {"Category": [quint], "Y": [rate]}, objects=labelled_bars(), sort=sort_by(quint, desc=False))
+    chart(p, "clusteredBarChart", 416, 232, 380, 464, "Items per 1,000 patients by ICB (42)",
+          {"Category": [col("Practice", "ICB")], "Y": [rate]},
+          objects=labelled_bars({"categoryAxis": [{"properties": {"fontSize": lit("7D")}}],
+                                 "labels": [{"properties": {"show": lit("true"), "fontSize": lit("7D")}}]}),
+          sort=sort_by(rate))
+    chart(p, "pivotTable", 808, 232, 448, 464, "Region and ICB comparison",
           {"Rows": [col("Practice", "Region"), col("Practice", "ICB")],
-           "Values": [mea("Items per 1,000 Patients", "Items /1k"), mea("Cost per 1,000 Patients", "Cost /1k"),
-                      mea("Antibacterial Items per 1,000 Patients", "Antibacterial /1k"), mea("Generic %", "Generic %")]},
-          sort=sort_by(mea("Items per 1,000 Patients", "Items /1k")))
+           "Values": [mea("Items per 1,000 Patients", "Items/1k"), mea("Cost per 1,000 Patients", "Cost/1k"),
+                      mea("Antibacterial Items per 1,000 Patients", "Abx/1k"), mea("Generic %", "Generic %")]},
+          objects=widths({"Practice.Region": 168, "_Measures.Items per 1,000 Patients": 58,
+                          "_Measures.Cost per 1,000 Patients": 62, "_Measures.Antibacterial Items per 1,000 Patients": 52,
+                          "_Measures.Generic %": 66}),
+          sort=sort_by(mea("Items per 1,000 Patients", "Items/1k")))
     return p
 
 
@@ -290,20 +312,20 @@ def medicines() -> Page:
     p = Page("medicines", "Medicines")
     header(p, "medicines")
     slicers(p, ["year", "region", "chapter"])
-    kpi_row(p, 136, 80, [("Total Items", "Items dispensed"), ("Total Cost", "Net ingredient cost"),
+    kpi_row(p, 140, 80, [("Total Items", "Items dispensed"), ("Total Cost", "Net ingredient cost"),
                          ("Cost per Item", "Cost per item"), ("Generic %", "Generic prescribing rate")])
     cost = mea("Total Cost", "Cost")
-    chart(p, "pivotTable", 24, 228, 620, 468, "BNF drill-down (expand rows: chapter > section > paragraph > chemical > presentation)",
+    chart(p, "pivotTable", 24, 232, 620, 464, "BNF drill-down (expand a row to drill to presentation)",
           {"Rows": [col("Medicine", "BNF Chapter", "BNF chapter"), col("Medicine", "BNF Section", "Section"),
                     col("Medicine", "BNF Paragraph", "Paragraph"), col("Medicine", "Chemical Substance", "Chemical"),
                     col("Medicine", "Presentation")],
            "Values": [mea("Total Items", "Items"), cost, mea("Cost per Item", "Cost / item"), mea("Generic %", "Generic %")]},
           sort=sort_by(cost))
     chem = col("Medicine", "Chemical Substance", "Chemical substance")
-    chart(p, "clusteredBarChart", 656, 228, 600, 260, "Top 15 chemical substances by cost",
-          {"Category": [chem], "Y": [cost]}, objects=labels_on(), sort=sort_by(cost),
-          filters=[topn_filter("top15chem", "Medicine", "Chemical Substance", "Total Cost", 15)])
-    chart(p, "clusteredColumnChart", 656, 500, 600, 196, "Seasonal profile: items by calendar month",
+    chart(p, "clusteredBarChart", 656, 232, 600, 300, "Top 10 chemical substances by cost",
+          {"Category": [chem], "Y": [cost]}, objects=labelled_bars(), sort=sort_by(cost),
+          filters=[topn_filter("top10chem", "Medicine", "Chemical Substance", "Total Cost", 10)])
+    chart(p, "clusteredColumnChart", 656, 544, 600, 152, "Seasonal profile: items by calendar month",
           {"Category": [col("Date", "Month Short", "Month")], "Y": [mea("Total Items", "Items")]},
           sort=sort_by(col("Date", "Month Short", "Month"), desc=False))
     return p
@@ -313,23 +335,25 @@ def savings() -> Page:
     p = Page("savings", "Generic Savings")
     header(p, "savings")
     slicers(p, ["year", "region", "chapter"])
-    kpi_row(p, 136, 80, [("Potential Generic Saving", "Potential saving"), ("Generic %", "Generic prescribing rate"),
+    kpi_row(p, 140, 80, [("Potential Generic Saving", "Potential saving"), ("Generic %", "Generic prescribing rate"),
                          ("Branded Items Where Generic Available", "Branded items with a generic"),
                          ("Saving % of Branded Cost", "Saving as % of that branded cost")])
-    chart(p, "columnChart", 24, 228, 400, 230, "Generic vs branded items where a generic exists",
+    chart(p, "columnChart", 24, 232, 400, 230, "Generic vs branded items where a generic exists",
           {"Category": [col("Date", "Year")],
            "Y": [mea("Generic Items Where Available", "Generic"), mea("Branded Items Where Generic Available", "Branded")]},
           objects=labels_on())
-    chart(p, "lineChart", 24, 470, 400, 226, "Generic prescribing rate, rolling 12 months",
+    chart(p, "lineChart", 24, 474, 400, 222, "Generic prescribing rate, rolling 12 months",
           {"Category": [col("Date", "Month Start", "Month")], "Y": [mea("Generic % Rolling 12M", "Generic % (rolling 12 months)")]})
     saving = mea("Potential Generic Saving", "Potential saving")
-    chart(p, "clusteredBarChart", 436, 228, 820, 230, "Top 10 chemical substances by potential saving",
+    chart(p, "clusteredBarChart", 436, 232, 820, 230, "Top 6 chemical substances by potential saving",
           {"Category": [col("Medicine", "Chemical Substance", "Chemical substance")], "Y": [saving]},
-          objects={**labels_on(), **series_color(GOLD)}, sort=sort_by(saving),
-          filters=[topn_filter("top10save", "Medicine", "Chemical Substance", "Potential Generic Saving", 10)])
-    chart(p, "tableEx", 436, 470, 820, 226, "Branded presentations that have a generic equivalent",
+          objects=labelled_bars(series_color(GOLD)), sort=sort_by(saving),
+          filters=[topn_filter("top6save", "Medicine", "Chemical Substance", "Potential Generic Saving", 6)])
+    chart(p, "tableEx", 436, 474, 820, 222, "Branded presentations that have a generic equivalent",
           {"Values": [col("Medicine", "Presentation", "Branded presentation"), col("Medicine", "Generic Equivalent"),
                       mea("Total Items", "Items"), mea("Total Cost", "Cost"), saving]},
+          objects=widths({"Medicine.Presentation": 236, "Medicine.Generic Equivalent": 260, "_Measures.Total Items": 76,
+                          "_Measures.Total Cost": 86, "_Measures.Potential Generic Saving": 112}),
           sort=sort_by(saving),
           filters=[categorical_filter("branded", "Medicine", "Generic or Branded", ["Branded"]),
                    categorical_filter("hasgeneric", "Medicine", "Generic Available", ["true"])])
@@ -339,27 +363,30 @@ def savings() -> Page:
 def quality() -> Page:
     p = Page("quality", "Data Quality")
     header(p, "quality")
-    kpi_row(p, 82, 78, [("Last EL Run Status", "Last EL run"), ("Last EL Run", "Last EL run started (UTC)"),
+    kpi_row(p, 80, 78, [("Last EL Run Status", "Last EL run"), ("Last EL Run", "Last EL run started (UTC)"),
                         ("Hours Since Last EL Run", "Hours since last EL run"), ("EL Success Rate", "EL run success rate"),
                         ("Rows Loaded (Latest Run)", "Rows loaded, latest run")], size=18)
-    kpi_row(p, 172, 64, [("Duplicate Submissions Removed", "Duplicates removed"), ("Late Arrival %", "Late-arriving lines"),
+    kpi_row(p, 168, 74, [("Duplicate Submissions Removed", "Duplicates removed"), ("Late Arrival %", "Late-arriving lines"),
                          ("Imputed Cost Lines", "Lines with imputed cost"), ("Restated Lines", "Restated lines"),
-                         ("Credit Lines", "Credit lines")], size=16)
-    chart(p, "tableEx", 24, 248, 700, 220, "Data-quality checks and how the pipeline handles them",
+                         ("Credit Lines", "Credit lines")], size=15)
+    chart(p, "tableEx", 24, 252, 760, 222, "Data-quality checks and how the pipeline handles them",
           {"Values": [col("Data Quality Checks", "Check"), col("Data Quality Checks", "Entity"),
                       col("Data Quality Checks", "Affected Rows"), col("Data Quality Checks", "Affected Share"),
-                      col("Data Quality Checks", "Handling")]})
+                      col("Data Quality Checks", "Handling")]},
+          objects=widths({"Data Quality Checks.Check": 176, "Data Quality Checks.Entity": 104,
+                          "Data Quality Checks.Affected Rows": 84, "Data Quality Checks.Affected Share": 84,
+                          "Data Quality Checks.Handling": 270}))
     lines = mea("Prescription Lines", "Lines")
-    chart(p, "clusteredColumnChart", 736, 248, 520, 220, "Lines by days from dispensing to arrival",
+    chart(p, "clusteredColumnChart", 796, 252, 460, 222, "Lines by days from dispensing to arrival",
           {"Category": [col("Prescriptions", "Arrival Lag Band", "Arrival lag")], "Y": [lines]},
-          objects=labels_on(), sort=sort_by(col("Prescriptions", "Arrival Lag Band", "Arrival lag"), desc=False))
-    chart(p, "tableEx", 24, 480, 700, 216, "Incremental loads of prescription lines (latest first)",
+          objects=labelled_bars(), sort=sort_by(col("Prescriptions", "Arrival Lag Band", "Arrival lag"), desc=False))
+    chart(p, "tableEx", 24, 486, 760, 210, "Incremental loads of prescription lines (latest first)",
           {"Values": [col("Pipeline Runs", "Started At"), col("Pipeline Runs", "Status"), col("Pipeline Runs", "Load Mode"),
                       col("Pipeline Runs", "Full Refresh"), col("Pipeline Runs", "Rows Loaded"),
                       col("Pipeline Runs", "Watermark After"), col("Pipeline Runs", "Duration (s)")]},
           sort=sort_by(col("Pipeline Runs", "Started At")),
           filters=[categorical_filter("itemtable", "Pipeline Runs", "Table", ["prescription_item"])])
-    chart(p, "lineChart", 736, 480, 520, 216, "Late-arriving share by dispensing month",
+    chart(p, "lineChart", 796, 486, 460, 210, "Late-arriving share by dispensing month",
           {"Category": [col("Date", "Month Start", "Month")], "Y": [mea("Late Arrival %", "Late-arriving share")]},
           objects=series_color(GOLD))
     return p

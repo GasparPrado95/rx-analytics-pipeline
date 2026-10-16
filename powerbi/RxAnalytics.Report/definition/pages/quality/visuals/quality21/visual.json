@@ -2,11 +2,11 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
   "name": "quality21",
   "position": {
-    "x": 736,
-    "y": 248,
+    "x": 796,
+    "y": 252,
     "z": 21000,
-    "height": 220,
-    "width": 520,
+    "height": 222,
+    "width": 460,
     "tabOrder": 21000
   },
   "visual": {
@@ -79,6 +79,19 @@
               "expr": {
                 "Literal": {
                   "Value": "true"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "valueAxis": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
                 }
               }
             }

@@ -51,6 +51,8 @@ table Prescriber
 		summarizeBy: none
 		sourceColumn: start_date
 
+		annotation UnderlyingDateTimeDataType = Date
+
 	partition Prescriber = m
 		mode: import
 		source =

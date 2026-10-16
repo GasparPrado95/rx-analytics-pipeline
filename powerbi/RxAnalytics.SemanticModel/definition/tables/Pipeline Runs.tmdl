@@ -95,6 +95,8 @@ table 'Pipeline Runs'
 		summarizeBy: none
 		sourceColumn: run_date
 
+		annotation UnderlyingDateTimeDataType = Date
+
 	column 'Run Succeeded'
 		dataType: boolean
 		lineageTag: 80b16a07-b7e5-408c-a7dc-18c0699babc5

@@ -5,3 +5,4 @@ expression 'GCP Project' = "rx-analytics-pipeline" meta [IsParameterQuery=true, 
 	annotation PBI_NavigationStepName = Navigation
 
 	annotation PBI_ResultType = Text
+

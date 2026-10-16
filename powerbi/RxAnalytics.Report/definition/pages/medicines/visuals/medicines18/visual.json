@@ -3,9 +3,9 @@
   "name": "medicines18",
   "position": {
     "x": 656,
-    "y": 228,
+    "y": 232,
     "z": 18000,
-    "height": 260,
+    "height": 300,
     "width": 600,
     "tabOrder": 18000
   },
@@ -84,6 +84,19 @@
             }
           }
         }
+      ],
+      "valueAxis": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            }
+          }
+        }
       ]
     },
     "visualContainerObjects": {
@@ -100,7 +113,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Top 15 chemical substances by cost'"
+                  "Value": "'Top 10 chemical substances by cost'"
                 }
               }
             }
@@ -126,7 +139,7 @@
   "filterConfig": {
     "filters": [
       {
-        "name": "top15chem",
+        "name": "top10chem",
         "type": "TopN",
         "field": {
           "Column": {
@@ -188,7 +201,7 @@
                         }
                       }
                     ],
-                    "Top": 15
+                    "Top": 10
                   }
                 }
               }

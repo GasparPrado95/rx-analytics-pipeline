@@ -81,7 +81,7 @@ table Medicine
 		sourceColumn: pack_quantity
 
 	column 'Current Unit Cost'
-		dataType: decimal
+		dataType: double
 		formatString: £#,0.0000
 		lineageTag: 3df568cb-c3f9-4b6c-b4c6-51e5c7aeba91
 		summarizeBy: none

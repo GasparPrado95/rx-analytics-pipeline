@@ -3,9 +3,9 @@
   "name": "overview19",
   "position": {
     "x": 24,
-    "y": 226,
+    "y": 230,
     "z": 19000,
-    "height": 46,
+    "height": 58,
     "width": 237,
     "tabOrder": 19000
   },
@@ -27,8 +27,8 @@
                 }
               },
               "queryRef": "_Measures.Items YoY %",
-              "nativeQueryRef": "vs prior year",
-              "displayName": "vs prior year"
+              "nativeQueryRef": "Latest year vs prior year",
+              "displayName": "Latest year vs prior year"
             }
           ]
         }
@@ -52,7 +52,7 @@
             "fontSize": {
               "expr": {
                 "Literal": {
-                  "Value": "12D"
+                  "Value": "13D"
                 }
               }
             },

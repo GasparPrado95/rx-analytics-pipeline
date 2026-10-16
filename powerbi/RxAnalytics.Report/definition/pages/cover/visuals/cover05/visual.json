@@ -3,9 +3,9 @@
   "name": "cover05",
   "position": {
     "x": 64,
-    "y": 80,
+    "y": 72,
     "z": 5000,
-    "height": 120,
+    "height": 150,
     "width": 670,
     "tabOrder": 5000
   },
@@ -22,7 +22,7 @@
                     "value": "Prescribing",
                     "textStyle": {
                       "fontFamily": "Georgia",
-                      "fontSize": "40pt",
+                      "fontSize": "38pt",
                       "color": "#F3EDF9"
                     }
                   }
@@ -35,7 +35,7 @@
                     "value": "Analytics Dashboard",
                     "textStyle": {
                       "fontFamily": "Segoe UI Light",
-                      "fontSize": "40pt",
+                      "fontSize": "38pt",
                       "color": "#F3EDF9"
                     }
                   }

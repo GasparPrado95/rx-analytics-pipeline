@@ -8,9 +8,11 @@ model RxAnalytics
 		legacyRedirects
 		returnErrorValuesAsNull
 
-annotation PBI_ProTooling = ["MCP-PBIModeling"]
+annotation PBI_ProTooling = ["MCP-PBIModeling","DevMode"]
 
 annotation __PBI_TimeIntelligenceEnabled = 0
+
+annotation PBI_QueryOrder = ["Prescriptions","Medicine","Practice","Prescriber","Patient Band","Date","Data Quality Checks","Pipeline Runs","GCP Project"]
 
 ref table Prescriptions
 ref table Medicine
@@ -21,4 +23,6 @@ ref table Date
 ref table 'Data Quality Checks'
 ref table 'Pipeline Runs'
 ref table _Measures
+
+ref cultureInfo en-US
 

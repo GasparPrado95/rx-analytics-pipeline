@@ -42,7 +42,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Generic Savings'"
+                  "Value": "'Savings'"
                 }
               }
             },

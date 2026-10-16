@@ -1,0 +1,139 @@
+{
+  "version": "1.1.0",
+  "diagrams": [
+    {
+      "ordinal": 0,
+      "scrollPosition": {
+        "x": 0,
+        "y": 0
+      },
+      "nodes": [
+        {
+          "location": {
+            "x": 955.721326920042,
+            "y": 353.32684042453116
+          },
+          "nodeIndex": "_Measures",
+          "nodeLineageTag": "bf0bc437-90b0-4ed0-a88e-6019e37ca923",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 1239.721326920042,
+            "y": 379.32684042453116
+          },
+          "nodeIndex": "Data Quality Checks",
+          "nodeLineageTag": "5cc97204-0e53-45ea-abed-d74b78c1b5b9",
+          "size": {
+            "height": 248,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 434.68310194890489,
+            "y": 656.65368084906231
+          },
+          "nodeIndex": "Date",
+          "nodeLineageTag": "c4afce58-0e3f-4b3c-b873-84267a555fa6",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 542.06759997226186,
+            "y": -50
+          },
+          "nodeIndex": "Medicine",
+          "nodeLineageTag": "2152733b-c2f8-4ec4-b82e-954f11a1c1d8",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 721.721326920042,
+            "y": 361.15827084785826
+          },
+          "nodeIndex": "Patient Band",
+          "nodeLineageTag": "643cc306-8a38-4cd0-bc37-870fc3a434fe",
+          "size": {
+            "height": 272,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 1523.721326920042,
+            "y": 353.32684042453116
+          },
+          "nodeIndex": "Pipeline Runs",
+          "nodeLineageTag": "48694293-6a0a-4bca-8220-6a5df83420d5",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 50,
+            "y": 360.69127985526205
+          },
+          "nodeIndex": "Practice",
+          "nodeLineageTag": "34465208-1164-4dc6-a032-41e78c91ebca",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 93.7386372107103,
+            "y": 59.179324588156987
+          },
+          "nodeIndex": "Prescriber",
+          "nodeLineageTag": "abf1c8f7-79dc-45fa-88c9-cfaa523c8836",
+          "size": {
+            "height": 248,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 380.75883699351425,
+            "y": 303.72912443633749
+          },
+          "nodeIndex": "Prescriptions",
+          "nodeLineageTag": "e6d47e48-fb83-4f22-9cea-a5854f5018a2",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 0
+        }
+      ],
+      "name": "All tables",
+      "zoomValue": 100,
+      "pinKeyFieldsToTop": false,
+      "showExtraHeaderInfo": false,
+      "hideKeyFieldsWhenCollapsed": false,
+      "tablesLocked": false
+    }
+  ],
+  "selectedDiagram": "All tables",
+  "defaultDiagram": "All tables"
+}

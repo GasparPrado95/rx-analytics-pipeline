@@ -3,9 +3,9 @@
   "name": "medicines17",
   "position": {
     "x": 24,
-    "y": 228,
+    "y": 232,
     "z": 17000,
-    "height": 468,
+    "height": 464,
     "width": 620,
     "tabOrder": 17000
   },
@@ -189,7 +189,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'BNF drill-down (expand rows: chapter > section > paragraph > chemical > presentation)'"
+                  "Value": "'BNF drill-down (expand a row to drill to presentation)'"
                 }
               }
             }

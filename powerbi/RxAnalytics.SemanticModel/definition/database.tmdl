@@ -1,4 +1,4 @@
 /// Synthetic NHS England primary-care prescribing: star schema over BigQuery marts_rx (dbt). All data is synthetic.
-database RxAnalytics
-	compatibilityLevel: 1601
+database
+	compatibilityLevel: 1606
 

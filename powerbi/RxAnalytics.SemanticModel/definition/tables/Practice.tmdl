@@ -82,6 +82,8 @@ table Practice
 		summarizeBy: none
 		sourceColumn: opened_date
 
+		annotation UnderlyingDateTimeDataType = Date
+
 	column 'ICB Code'
 		dataType: string
 		displayFolder: Codes

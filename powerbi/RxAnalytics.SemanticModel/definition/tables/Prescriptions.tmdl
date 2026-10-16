@@ -10,6 +10,8 @@ table Prescriptions
 		summarizeBy: none
 		sourceColumn: dispensing_date
 
+		annotation UnderlyingDateTimeDataType = Date
+
 	column 'Presentation Code'
 		dataType: string
 		isHidden
@@ -49,7 +51,7 @@ table Prescriptions
 		sourceColumn: items
 
 	column Quantity
-		dataType: decimal
+		dataType: double
 		isHidden
 		formatString: #,0
 		lineageTag: ac214898-d1e7-4a7c-b68c-e236f5345095
@@ -57,7 +59,7 @@ table Prescriptions
 		sourceColumn: quantity
 
 	column 'Net Ingredient Cost'
-		dataType: decimal
+		dataType: double
 		isHidden
 		formatString: £#,0.00
 		lineageTag: 178d082f-c51e-47fd-97c4-ae3deea14bf3
@@ -65,7 +67,7 @@ table Prescriptions
 		sourceColumn: net_ingredient_cost
 
 	column 'Actual Cost'
-		dataType: decimal
+		dataType: double
 		isHidden
 		formatString: £#,0.00
 		lineageTag: 221b7be4-455f-4e77-8406-c63f99c8801d
@@ -73,7 +75,7 @@ table Prescriptions
 		sourceColumn: actual_cost
 
 	column 'Potential Generic Saving'
-		dataType: decimal
+		dataType: double
 		isHidden
 		formatString: £#,0.00
 		lineageTag: 138f6a86-ea97-4dfb-90d8-11835833a25f

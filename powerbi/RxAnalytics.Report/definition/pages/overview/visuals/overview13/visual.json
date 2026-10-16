@@ -3,9 +3,9 @@
   "name": "overview13",
   "position": {
     "x": 880,
-    "y": 86,
+    "y": 84,
     "z": 13000,
-    "height": 40,
+    "height": 44,
     "width": 376,
     "tabOrder": 13000
   },
@@ -19,7 +19,7 @@
               {
                 "textRuns": [
                   {
-                    "value": "Rates are monthly averages per 1,000 registered patients. Change figures compare with the same period a year earlier.",
+                    "value": "Rates are monthly averages per 1,000 registered patients. Change figures compare the latest year in the selection with the year before.",
                     "textStyle": {
                       "fontFamily": "Segoe UI",
                       "fontSize": "8pt",

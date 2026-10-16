@@ -3,10 +3,10 @@
   "name": "cover28",
   "position": {
     "x": 64,
-    "y": 656,
+    "y": 646,
     "z": 28000,
-    "height": 48,
-    "width": 500,
+    "height": 62,
+    "width": 520,
     "tabOrder": 28000
   },
   "visual": {
@@ -32,7 +32,20 @@
               {
                 "textRuns": [
                   {
-                    "value": "All data is synthetic: no real patients, prescribers or practices. Cover photo: apothecary bottles, Sherbrooke Village Museum, by France3470 (public domain).",
+                    "value": "All data is synthetic: no real patients, prescribers or practices.",
+                    "textStyle": {
+                      "fontFamily": "Segoe UI",
+                      "fontSize": "8pt",
+                      "color": "#A893C4"
+                    }
+                  }
+                ],
+                "horizontalTextAlignment": "left"
+              },
+              {
+                "textRuns": [
+                  {
+                    "value": "Cover photo: apothecary bottles, Sherbrooke Village Museum, by France3470 (public domain).",
                     "textStyle": {
                       "fontFamily": "Segoe UI",
                       "fontSize": "8pt",

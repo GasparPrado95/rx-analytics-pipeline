@@ -3,7 +3,7 @@
   "name": "cover14",
   "position": {
     "x": 112,
-    "y": 380,
+    "y": 390,
     "z": 14000,
     "height": 18,
     "width": 620,
@@ -19,7 +19,7 @@
               {
                 "textRuns": [
                   {
-                    "value": "Items per 1,000 patients by region, ICB, postcode district and deprivation",
+                    "value": "Items per 1,000 patients by region, ICB and practice deprivation",
                     "textStyle": {
                       "fontFamily": "Segoe UI",
                       "fontSize": "9pt",

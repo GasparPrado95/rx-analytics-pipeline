@@ -3,10 +3,10 @@
   "name": "regions16",
   "position": {
     "x": 24,
-    "y": 228,
+    "y": 232,
     "z": 16000,
-    "height": 222,
-    "width": 400,
+    "height": 236,
+    "width": 380,
     "tabOrder": 16000
   },
   "visual": {
@@ -78,6 +78,19 @@
               "expr": {
                 "Literal": {
                   "Value": "true"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "valueAxis": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
                 }
               }
             }

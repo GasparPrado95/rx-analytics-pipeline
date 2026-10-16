@@ -143,10 +143,14 @@ table _Measures
 				VAR v = SELECTEDMEASURE ()
 				RETURN SWITCH ( TRUE (), ABS ( v ) >= 1000000, "#,0,,.00""M""", ABS ( v ) >= 10000, "#,0,.0""K""", "#,0" )
 
-	/// Change in items versus the same period last year.
+	/// Items in the latest calendar year of the selection vs the year before (for cards and tables, not date axes).
 	measure 'Items YoY %' =
-			VAR prior = [Total Items PY]
-			RETURN IF ( NOT ISBLANK ( prior ) && prior <> 0, DIVIDE ( [Total Items] - prior, prior ) )
+			-- Latest calendar year in the selection vs the year before (all years selected: 2025 vs 2024).
+			-- Comparing whole selections with SAMEPERIODLASTYEAR would set 2023-25 against 2023-24.
+			VAR latestYear = MAX ( 'Date'[Year] )
+			VAR currentValue = CALCULATE ( [Total Items], 'Date'[Year] = latestYear )
+			VAR priorValue = CALCULATE ( [Total Items], 'Date'[Year] = latestYear - 1 )
+			RETURN IF ( NOT ISBLANK ( priorValue ) && priorValue <> 0, DIVIDE ( currentValue - priorValue, priorValue ) )
 		formatString: +0.0%;-0.0%;0.0%
 		displayFolder: Time Intelligence
 		lineageTag: 47dbfbfd-f5eb-4d0e-be38-6a338f18eec2
@@ -160,18 +164,25 @@ table _Measures
 				VAR v = SELECTEDMEASURE ()
 				RETURN SWITCH ( TRUE (), ABS ( v ) >= 1000000, "£#,0,,.0""M""", ABS ( v ) >= 10000, "£#,0,.0""K""", "£#,0" )
 
-	/// Change in net ingredient cost versus the same period last year.
+	/// Net ingredient cost in the latest calendar year of the selection vs the year before (for cards and tables, not date axes).
 	measure 'Cost YoY %' =
-			VAR prior = [Total Cost PY]
-			RETURN IF ( NOT ISBLANK ( prior ) && prior <> 0, DIVIDE ( [Total Cost] - prior, prior ) )
+			-- Latest calendar year in the selection vs the year before (all years selected: 2025 vs 2024).
+			-- Comparing whole selections with SAMEPERIODLASTYEAR would set 2023-25 against 2023-24.
+			VAR latestYear = MAX ( 'Date'[Year] )
+			VAR currentValue = CALCULATE ( [Total Cost], 'Date'[Year] = latestYear )
+			VAR priorValue = CALCULATE ( [Total Cost], 'Date'[Year] = latestYear - 1 )
+			RETURN IF ( NOT ISBLANK ( priorValue ) && priorValue <> 0, DIVIDE ( currentValue - priorValue, priorValue ) )
 		formatString: +0.0%;-0.0%;0.0%
 		displayFolder: Time Intelligence
 		lineageTag: 442cae79-bd12-4a72-b32f-30febe0c96b3
 
-	/// Change in generic prescribing rate versus the same period last year, in percentage points.
+	/// Generic prescribing rate in the latest calendar year of the selection vs the year before, in percentage points.
 	measure 'Generic % Change vs PY' =
-			VAR prior = CALCULATE ( [Generic %], SAMEPERIODLASTYEAR ( 'Date'[Date] ) )
-			RETURN IF ( NOT ISBLANK ( prior ), ( [Generic %] - prior ) * 100 )
+			-- Latest calendar year in the selection vs the year before, in percentage points.
+			VAR latestYear = MAX ( 'Date'[Year] )
+			VAR currentValue = CALCULATE ( [Generic %], 'Date'[Year] = latestYear )
+			VAR priorValue = CALCULATE ( [Generic %], 'Date'[Year] = latestYear - 1 )
+			RETURN IF ( NOT ISBLANK ( priorValue ), ( currentValue - priorValue ) * 100 )
 		formatString: +0.0" pp";-0.0" pp";0.0" pp"
 		displayFolder: Time Intelligence
 		lineageTag: 2efffe4f-7ed8-4536-bd80-9182df2ddf4b

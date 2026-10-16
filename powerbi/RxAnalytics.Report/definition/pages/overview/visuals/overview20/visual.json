@@ -3,9 +3,9 @@
   "name": "overview20",
   "position": {
     "x": 273,
-    "y": 226,
+    "y": 230,
     "z": 20000,
-    "height": 46,
+    "height": 58,
     "width": 237,
     "tabOrder": 20000
   },
@@ -27,8 +27,8 @@
                 }
               },
               "queryRef": "_Measures.Cost YoY %",
-              "nativeQueryRef": "vs prior year",
-              "displayName": "vs prior year"
+              "nativeQueryRef": "Latest year vs prior year",
+              "displayName": "Latest year vs prior year"
             }
           ]
         }
@@ -52,7 +52,7 @@
             "fontSize": {
               "expr": {
                 "Literal": {
-                  "Value": "12D"
+                  "Value": "13D"
                 }
               }
             },

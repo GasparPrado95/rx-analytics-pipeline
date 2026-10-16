@@ -3,7 +3,7 @@
   "name": "savings19",
   "position": {
     "x": 436,
-    "y": 228,
+    "y": 232,
     "z": 19000,
     "height": 230,
     "width": 820,
@@ -85,6 +85,19 @@
           }
         }
       ],
+      "valueAxis": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ],
       "dataPoint": [
         {
           "properties": {
@@ -117,7 +130,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Top 10 chemical substances by potential saving'"
+                  "Value": "'Top 6 chemical substances by potential saving'"
                 }
               }
             }
@@ -143,7 +156,7 @@
   "filterConfig": {
     "filters": [
       {
-        "name": "top10save",
+        "name": "top6save",
         "type": "TopN",
         "field": {
           "Column": {
@@ -205,7 +218,7 @@
                         }
                       }
                     ],
-                    "Top": 10
+                    "Top": 6
                   }
                 }
               }
