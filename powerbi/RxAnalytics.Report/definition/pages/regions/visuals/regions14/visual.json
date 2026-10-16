@@ -2,36 +2,18 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
   "name": "regions14",
   "position": {
-    "x": 24,
-    "y": 228,
+    "x": 646,
+    "y": 136,
     "z": 14000,
-    "height": 222,
-    "width": 400,
+    "height": 80,
+    "width": 299,
     "tabOrder": 14000
   },
   "visual": {
-    "visualType": "clusteredBarChart",
+    "visualType": "card",
     "query": {
       "queryState": {
-        "Category": {
-          "projections": [
-            {
-              "field": {
-                "Column": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "Practice"
-                    }
-                  },
-                  "Property": "Region"
-                }
-              },
-              "queryRef": "Practice.Region",
-              "nativeQueryRef": "Region"
-            }
-          ]
-        },
-        "Y": {
+        "Values": {
           "projections": [
             {
               "field": {
@@ -41,43 +23,67 @@
                       "Entity": "_Measures"
                     }
                   },
-                  "Property": "Items per 1,000 Patients"
+                  "Property": "Antibacterial Items per 1,000 Patients"
                 }
               },
-              "queryRef": "_Measures.Items per 1,000 Patients",
-              "nativeQueryRef": "Items per 1,000 patients",
-              "displayName": "Items per 1,000 patients"
+              "queryRef": "_Measures.Antibacterial Items per 1,000 Patients",
+              "nativeQueryRef": "Antibacterial items per 1,000 / month",
+              "displayName": "Antibacterial items per 1,000 / month"
             }
           ]
         }
-      },
-      "sortDefinition": {
-        "sort": [
-          {
-            "field": {
-              "Measure": {
-                "Expression": {
-                  "SourceRef": {
-                    "Entity": "_Measures"
-                  }
-                },
-                "Property": "Items per 1,000 Patients"
-              }
-            },
-            "direction": "Descending"
-          }
-        ],
-        "isDefaultSort": true
       }
     },
     "objects": {
       "labels": [
         {
           "properties": {
+            "color": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#241B2F'"
+                    }
+                  }
+                }
+              }
+            },
+            "fontSize": {
+              "expr": {
+                "Literal": {
+                  "Value": "22D"
+                }
+              }
+            },
+            "fontFamily": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Segoe UI Semibold'"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "categoryLabels": [
+        {
+          "properties": {
             "show": {
               "expr": {
                 "Literal": {
                   "Value": "true"
+                }
+              }
+            },
+            "color": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#5E556A'"
+                    }
+                  }
                 }
               }
             }
@@ -92,14 +98,7 @@
             "show": {
               "expr": {
                 "Literal": {
-                  "Value": "true"
-                }
-              }
-            },
-            "text": {
-              "expr": {
-                "Literal": {
-                  "Value": "'Items per 1,000 patients by NHS region'"
+                  "Value": "false"
                 }
               }
             }

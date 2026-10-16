@@ -2,37 +2,18 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
   "name": "overview20",
   "position": {
-    "x": 24,
-    "y": 284,
+    "x": 273,
+    "y": 226,
     "z": 20000,
-    "height": 210,
-    "width": 608,
+    "height": 46,
+    "width": 237,
     "tabOrder": 20000
   },
   "visual": {
-    "visualType": "lineChart",
+    "visualType": "card",
     "query": {
       "queryState": {
-        "Category": {
-          "projections": [
-            {
-              "field": {
-                "Column": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "Date"
-                    }
-                  },
-                  "Property": "Month Start"
-                }
-              },
-              "queryRef": "Date.Month Start",
-              "nativeQueryRef": "Month",
-              "displayName": "Month"
-            }
-          ]
-        },
-        "Y": {
+        "Values": {
           "projections": [
             {
               "field": {
@@ -42,19 +23,50 @@
                       "Entity": "_Measures"
                     }
                   },
-                  "Property": "Total Items"
+                  "Property": "Cost YoY %"
                 }
               },
-              "queryRef": "_Measures.Total Items",
-              "nativeQueryRef": "Items",
-              "displayName": "Items"
+              "queryRef": "_Measures.Cost YoY %",
+              "nativeQueryRef": "vs prior year",
+              "displayName": "vs prior year"
             }
           ]
         }
       }
     },
-    "visualContainerObjects": {
-      "title": [
+    "objects": {
+      "labels": [
+        {
+          "properties": {
+            "color": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#241B2F'"
+                    }
+                  }
+                }
+              }
+            },
+            "fontSize": {
+              "expr": {
+                "Literal": {
+                  "Value": "12D"
+                }
+              }
+            },
+            "fontFamily": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Segoe UI Semibold'"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "categoryLabels": [
         {
           "properties": {
             "show": {
@@ -64,10 +76,29 @@
                 }
               }
             },
-            "text": {
+            "color": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#5E556A'"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
               "expr": {
                 "Literal": {
-                  "Value": "'Items dispensed per month'"
+                  "Value": "false"
                 }
               }
             }

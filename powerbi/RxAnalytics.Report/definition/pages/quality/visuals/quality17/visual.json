@@ -2,7 +2,7 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
   "name": "quality17",
   "position": {
-    "x": 1019,
+    "x": 522,
     "y": 172,
     "z": 17000,
     "height": 64,
@@ -23,12 +23,12 @@
                       "Entity": "_Measures"
                     }
                   },
-                  "Property": "Credit Lines"
+                  "Property": "Imputed Cost Lines"
                 }
               },
-              "queryRef": "_Measures.Credit Lines",
-              "nativeQueryRef": "Credit lines",
-              "displayName": "Credit lines"
+              "queryRef": "_Measures.Imputed Cost Lines",
+              "nativeQueryRef": "Lines with imputed cost",
+              "displayName": "Lines with imputed cost"
             }
           ]
         }

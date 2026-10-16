@@ -2,15 +2,15 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
   "name": "savings17",
   "position": {
-    "x": 436,
+    "x": 24,
     "y": 228,
     "z": 17000,
     "height": 230,
-    "width": 820,
+    "width": 400,
     "tabOrder": 17000
   },
   "visual": {
-    "visualType": "clusteredBarChart",
+    "visualType": "columnChart",
     "query": {
       "queryState": {
         "Category": {
@@ -20,15 +20,14 @@
                 "Column": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "Medicine"
+                      "Entity": "Date"
                     }
                   },
-                  "Property": "Chemical Substance"
+                  "Property": "Year"
                 }
               },
-              "queryRef": "Medicine.Chemical Substance",
-              "nativeQueryRef": "Chemical substance",
-              "displayName": "Chemical substance"
+              "queryRef": "Date.Year",
+              "nativeQueryRef": "Year"
             }
           ]
         },
@@ -42,33 +41,30 @@
                       "Entity": "_Measures"
                     }
                   },
-                  "Property": "Potential Generic Saving"
+                  "Property": "Generic Items Where Available"
                 }
               },
-              "queryRef": "_Measures.Potential Generic Saving",
-              "nativeQueryRef": "Potential saving",
-              "displayName": "Potential saving"
+              "queryRef": "_Measures.Generic Items Where Available",
+              "nativeQueryRef": "Generic",
+              "displayName": "Generic"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Measures"
+                    }
+                  },
+                  "Property": "Branded Items Where Generic Available"
+                }
+              },
+              "queryRef": "_Measures.Branded Items Where Generic Available",
+              "nativeQueryRef": "Branded",
+              "displayName": "Branded"
             }
           ]
         }
-      },
-      "sortDefinition": {
-        "sort": [
-          {
-            "field": {
-              "Measure": {
-                "Expression": {
-                  "SourceRef": {
-                    "Entity": "_Measures"
-                  }
-                },
-                "Property": "Potential Generic Saving"
-              }
-            },
-            "direction": "Descending"
-          }
-        ],
-        "isDefaultSort": true
       }
     },
     "objects": {
@@ -79,23 +75,6 @@
               "expr": {
                 "Literal": {
                   "Value": "true"
-                }
-              }
-            }
-          }
-        }
-      ],
-      "dataPoint": [
-        {
-          "properties": {
-            "fill": {
-              "solid": {
-                "color": {
-                  "expr": {
-                    "Literal": {
-                      "Value": "'#B57D00'"
-                    }
-                  }
                 }
               }
             }
@@ -117,7 +96,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Top 10 chemical substances by potential saving'"
+                  "Value": "'Generic vs branded items where a generic exists'"
                 }
               }
             }
@@ -139,110 +118,5 @@
       ]
     },
     "drillFilterOtherVisuals": true
-  },
-  "filterConfig": {
-    "filters": [
-      {
-        "name": "top10save",
-        "type": "TopN",
-        "field": {
-          "Column": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "Medicine"
-              }
-            },
-            "Property": "Chemical Substance"
-          }
-        },
-        "filter": {
-          "Version": 2,
-          "From": [
-            {
-              "Name": "subquery",
-              "Type": 2,
-              "Expression": {
-                "Subquery": {
-                  "Query": {
-                    "Version": 2,
-                    "From": [
-                      {
-                        "Name": "t",
-                        "Entity": "Medicine",
-                        "Type": 0
-                      },
-                      {
-                        "Name": "m",
-                        "Entity": "_Measures",
-                        "Type": 0
-                      }
-                    ],
-                    "Select": [
-                      {
-                        "Column": {
-                          "Expression": {
-                            "SourceRef": {
-                              "Source": "t"
-                            }
-                          },
-                          "Property": "Chemical Substance"
-                        },
-                        "Name": "field"
-                      }
-                    ],
-                    "OrderBy": [
-                      {
-                        "Direction": 2,
-                        "Expression": {
-                          "Measure": {
-                            "Expression": {
-                              "SourceRef": {
-                                "Source": "m"
-                              }
-                            },
-                            "Property": "Potential Generic Saving"
-                          }
-                        }
-                      }
-                    ],
-                    "Top": 10
-                  }
-                }
-              }
-            },
-            {
-              "Name": "t",
-              "Entity": "Medicine",
-              "Type": 0
-            }
-          ],
-          "Where": [
-            {
-              "Condition": {
-                "In": {
-                  "Expressions": [
-                    {
-                      "Column": {
-                        "Expression": {
-                          "SourceRef": {
-                            "Source": "t"
-                          }
-                        },
-                        "Property": "Chemical Substance"
-                      }
-                    }
-                  ],
-                  "Table": {
-                    "SourceRef": {
-                      "Source": "subquery"
-                    }
-                  }
-                }
-              }
-            }
-          ]
-        }
-      }
-    ]
   }
 }

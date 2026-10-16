@@ -2,18 +2,18 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
   "name": "regions17",
   "position": {
-    "x": 808,
-    "y": 228,
+    "x": 24,
+    "y": 462,
     "z": 17000,
-    "height": 468,
-    "width": 448,
+    "height": 234,
+    "width": 400,
     "tabOrder": 17000
   },
   "visual": {
-    "visualType": "pivotTable",
+    "visualType": "clusteredColumnChart",
     "query": {
       "queryState": {
-        "Rows": {
+        "Category": {
           "projections": [
             {
               "field": {
@@ -23,29 +23,16 @@
                       "Entity": "Practice"
                     }
                   },
-                  "Property": "Region"
+                  "Property": "Deprivation Quintile"
                 }
               },
-              "queryRef": "Practice.Region",
-              "nativeQueryRef": "Region"
-            },
-            {
-              "field": {
-                "Column": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "Practice"
-                    }
-                  },
-                  "Property": "ICB"
-                }
-              },
-              "queryRef": "Practice.ICB",
-              "nativeQueryRef": "ICB"
+              "queryRef": "Practice.Deprivation Quintile",
+              "nativeQueryRef": "Deprivation quintile",
+              "displayName": "Deprivation quintile"
             }
           ]
         },
-        "Values": {
+        "Y": {
           "projections": [
             {
               "field": {
@@ -59,53 +46,8 @@
                 }
               },
               "queryRef": "_Measures.Items per 1,000 Patients",
-              "nativeQueryRef": "Items /1k",
-              "displayName": "Items /1k"
-            },
-            {
-              "field": {
-                "Measure": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "_Measures"
-                    }
-                  },
-                  "Property": "Cost per 1,000 Patients"
-                }
-              },
-              "queryRef": "_Measures.Cost per 1,000 Patients",
-              "nativeQueryRef": "Cost /1k",
-              "displayName": "Cost /1k"
-            },
-            {
-              "field": {
-                "Measure": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "_Measures"
-                    }
-                  },
-                  "Property": "Antibacterial Items per 1,000 Patients"
-                }
-              },
-              "queryRef": "_Measures.Antibacterial Items per 1,000 Patients",
-              "nativeQueryRef": "Antibacterial /1k",
-              "displayName": "Antibacterial /1k"
-            },
-            {
-              "field": {
-                "Measure": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "_Measures"
-                    }
-                  },
-                  "Property": "Generic %"
-                }
-              },
-              "queryRef": "_Measures.Generic %",
-              "nativeQueryRef": "Generic %",
-              "displayName": "Generic %"
+              "nativeQueryRef": "Items per 1,000 patients",
+              "displayName": "Items per 1,000 patients"
             }
           ]
         }
@@ -114,20 +56,35 @@
         "sort": [
           {
             "field": {
-              "Measure": {
+              "Column": {
                 "Expression": {
                   "SourceRef": {
-                    "Entity": "_Measures"
+                    "Entity": "Practice"
                   }
                 },
-                "Property": "Items per 1,000 Patients"
+                "Property": "Deprivation Quintile"
               }
             },
-            "direction": "Descending"
+            "direction": "Ascending"
           }
         ],
         "isDefaultSort": true
       }
+    },
+    "objects": {
+      "labels": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            }
+          }
+        }
+      ]
     },
     "visualContainerObjects": {
       "title": [
@@ -143,7 +100,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Region and ICB comparison'"
+                  "Value": "'Items per 1,000 patients by practice deprivation'"
                 }
               }
             }

@@ -2,10 +2,10 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
   "name": "quality14",
   "position": {
-    "x": 273,
-    "y": 172,
+    "x": 1019,
+    "y": 82,
     "z": 14000,
-    "height": 64,
+    "height": 78,
     "width": 237,
     "tabOrder": 14000
   },
@@ -23,12 +23,12 @@
                       "Entity": "_Measures"
                     }
                   },
-                  "Property": "Late Arrival %"
+                  "Property": "Rows Loaded (Latest Run)"
                 }
               },
-              "queryRef": "_Measures.Late Arrival %",
-              "nativeQueryRef": "Late-arriving lines",
-              "displayName": "Late-arriving lines"
+              "queryRef": "_Measures.Rows Loaded (Latest Run)",
+              "nativeQueryRef": "Rows loaded, latest run",
+              "displayName": "Rows loaded, latest run"
             }
           ]
         }
@@ -52,7 +52,7 @@
             "fontSize": {
               "expr": {
                 "Literal": {
-                  "Value": "16D"
+                  "Value": "18D"
                 }
               }
             },

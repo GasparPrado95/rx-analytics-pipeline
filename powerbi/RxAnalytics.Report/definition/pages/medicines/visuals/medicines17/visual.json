@@ -2,37 +2,96 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
   "name": "medicines17",
   "position": {
-    "x": 656,
-    "y": 500,
+    "x": 24,
+    "y": 228,
     "z": 17000,
-    "height": 196,
-    "width": 600,
+    "height": 468,
+    "width": 620,
     "tabOrder": 17000
   },
   "visual": {
-    "visualType": "clusteredColumnChart",
+    "visualType": "pivotTable",
     "query": {
       "queryState": {
-        "Category": {
+        "Rows": {
           "projections": [
             {
               "field": {
                 "Column": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "Date"
+                      "Entity": "Medicine"
                     }
                   },
-                  "Property": "Month Short"
+                  "Property": "BNF Chapter"
                 }
               },
-              "queryRef": "Date.Month Short",
-              "nativeQueryRef": "Month",
-              "displayName": "Month"
+              "queryRef": "Medicine.BNF Chapter",
+              "nativeQueryRef": "BNF chapter",
+              "displayName": "BNF chapter"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Medicine"
+                    }
+                  },
+                  "Property": "BNF Section"
+                }
+              },
+              "queryRef": "Medicine.BNF Section",
+              "nativeQueryRef": "Section",
+              "displayName": "Section"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Medicine"
+                    }
+                  },
+                  "Property": "BNF Paragraph"
+                }
+              },
+              "queryRef": "Medicine.BNF Paragraph",
+              "nativeQueryRef": "Paragraph",
+              "displayName": "Paragraph"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Medicine"
+                    }
+                  },
+                  "Property": "Chemical Substance"
+                }
+              },
+              "queryRef": "Medicine.Chemical Substance",
+              "nativeQueryRef": "Chemical",
+              "displayName": "Chemical"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Medicine"
+                    }
+                  },
+                  "Property": "Presentation"
+                }
+              },
+              "queryRef": "Medicine.Presentation",
+              "nativeQueryRef": "Presentation"
             }
           ]
         },
-        "Y": {
+        "Values": {
           "projections": [
             {
               "field": {
@@ -48,6 +107,51 @@
               "queryRef": "_Measures.Total Items",
               "nativeQueryRef": "Items",
               "displayName": "Items"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Measures"
+                    }
+                  },
+                  "Property": "Total Cost"
+                }
+              },
+              "queryRef": "_Measures.Total Cost",
+              "nativeQueryRef": "Cost",
+              "displayName": "Cost"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Measures"
+                    }
+                  },
+                  "Property": "Cost per Item"
+                }
+              },
+              "queryRef": "_Measures.Cost per Item",
+              "nativeQueryRef": "Cost / item",
+              "displayName": "Cost / item"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Measures"
+                    }
+                  },
+                  "Property": "Generic %"
+                }
+              },
+              "queryRef": "_Measures.Generic %",
+              "nativeQueryRef": "Generic %",
+              "displayName": "Generic %"
             }
           ]
         }
@@ -56,16 +160,16 @@
         "sort": [
           {
             "field": {
-              "Column": {
+              "Measure": {
                 "Expression": {
                   "SourceRef": {
-                    "Entity": "Date"
+                    "Entity": "_Measures"
                   }
                 },
-                "Property": "Month Short"
+                "Property": "Total Cost"
               }
             },
-            "direction": "Ascending"
+            "direction": "Descending"
           }
         ],
         "isDefaultSort": true
@@ -85,7 +189,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Seasonal profile: items by calendar month'"
+                  "Value": "'BNF drill-down (expand rows: chapter > section > paragraph > chemical > presentation)'"
                 }
               }
             }

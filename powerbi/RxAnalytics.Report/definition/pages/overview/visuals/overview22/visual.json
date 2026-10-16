@@ -3,14 +3,14 @@
   "name": "overview22",
   "position": {
     "x": 24,
-    "y": 506,
+    "y": 284,
     "z": 22000,
-    "height": 190,
+    "height": 210,
     "width": 608,
     "tabOrder": 22000
   },
   "visual": {
-    "visualType": "clusteredBarChart",
+    "visualType": "lineChart",
     "query": {
       "queryState": {
         "Category": {
@@ -20,15 +20,15 @@
                 "Column": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "Medicine"
+                      "Entity": "Date"
                     }
                   },
-                  "Property": "BNF Chapter"
+                  "Property": "Month Start"
                 }
               },
-              "queryRef": "Medicine.BNF Chapter",
-              "nativeQueryRef": "BNF chapter",
-              "displayName": "BNF chapter"
+              "queryRef": "Date.Month Start",
+              "nativeQueryRef": "Month",
+              "displayName": "Month"
             }
           ]
         },
@@ -51,40 +51,7 @@
             }
           ]
         }
-      },
-      "sortDefinition": {
-        "sort": [
-          {
-            "field": {
-              "Measure": {
-                "Expression": {
-                  "SourceRef": {
-                    "Entity": "_Measures"
-                  }
-                },
-                "Property": "Total Items"
-              }
-            },
-            "direction": "Descending"
-          }
-        ],
-        "isDefaultSort": true
       }
-    },
-    "objects": {
-      "labels": [
-        {
-          "properties": {
-            "show": {
-              "expr": {
-                "Literal": {
-                  "Value": "true"
-                }
-              }
-            }
-          }
-        }
-      ]
     },
     "visualContainerObjects": {
       "title": [
@@ -100,7 +67,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Items by BNF chapter'"
+                  "Value": "'Items dispensed per month'"
                 }
               }
             }

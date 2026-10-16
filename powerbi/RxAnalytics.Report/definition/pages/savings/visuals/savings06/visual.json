@@ -2,11 +2,11 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
   "name": "savings06",
   "position": {
-    "x": 1032,
-    "y": 18,
+    "x": 856,
+    "y": 19,
     "z": 6000,
-    "height": 30,
-    "width": 108,
+    "height": 28,
+    "width": 98,
     "tabOrder": 6000
   },
   "visual": {
@@ -42,7 +42,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Generic Savings'"
+                  "Value": "'Regions'"
                 }
               }
             },
@@ -51,7 +51,7 @@
                 "color": {
                   "expr": {
                     "Literal": {
-                      "Value": "'#C9A227'"
+                      "Value": "'#CDBDE3'"
                     }
                   }
                 }
@@ -60,14 +60,14 @@
             "fontSize": {
               "expr": {
                 "Literal": {
-                  "Value": "10D"
+                  "Value": "9.5D"
                 }
               }
             },
             "fontFamily": {
               "expr": {
                 "Literal": {
-                  "Value": "'Segoe UI Semibold'"
+                  "Value": "'Segoe UI'"
                 }
               }
             },
@@ -288,7 +288,7 @@
             "navigationSection": {
               "expr": {
                 "Literal": {
-                  "Value": "'savings'"
+                  "Value": "'regions'"
                 }
               }
             }

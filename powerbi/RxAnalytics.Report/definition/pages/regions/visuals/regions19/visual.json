@@ -1,0 +1,169 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
+  "name": "regions19",
+  "position": {
+    "x": 808,
+    "y": 228,
+    "z": 19000,
+    "height": 468,
+    "width": 448,
+    "tabOrder": 19000
+  },
+  "visual": {
+    "visualType": "pivotTable",
+    "query": {
+      "queryState": {
+        "Rows": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Practice"
+                    }
+                  },
+                  "Property": "Region"
+                }
+              },
+              "queryRef": "Practice.Region",
+              "nativeQueryRef": "Region"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Practice"
+                    }
+                  },
+                  "Property": "ICB"
+                }
+              },
+              "queryRef": "Practice.ICB",
+              "nativeQueryRef": "ICB"
+            }
+          ]
+        },
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Measures"
+                    }
+                  },
+                  "Property": "Items per 1,000 Patients"
+                }
+              },
+              "queryRef": "_Measures.Items per 1,000 Patients",
+              "nativeQueryRef": "Items /1k",
+              "displayName": "Items /1k"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Measures"
+                    }
+                  },
+                  "Property": "Cost per 1,000 Patients"
+                }
+              },
+              "queryRef": "_Measures.Cost per 1,000 Patients",
+              "nativeQueryRef": "Cost /1k",
+              "displayName": "Cost /1k"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Measures"
+                    }
+                  },
+                  "Property": "Antibacterial Items per 1,000 Patients"
+                }
+              },
+              "queryRef": "_Measures.Antibacterial Items per 1,000 Patients",
+              "nativeQueryRef": "Antibacterial /1k",
+              "displayName": "Antibacterial /1k"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Measures"
+                    }
+                  },
+                  "Property": "Generic %"
+                }
+              },
+              "queryRef": "_Measures.Generic %",
+              "nativeQueryRef": "Generic %",
+              "displayName": "Generic %"
+            }
+          ]
+        }
+      },
+      "sortDefinition": {
+        "sort": [
+          {
+            "field": {
+              "Measure": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "_Measures"
+                  }
+                },
+                "Property": "Items per 1,000 Patients"
+              }
+            },
+            "direction": "Descending"
+          }
+        ],
+        "isDefaultSort": true
+      }
+    },
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Region and ICB comparison'"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "subTitle": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

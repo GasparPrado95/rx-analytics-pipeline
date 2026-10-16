@@ -2,37 +2,18 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
   "name": "overview21",
   "position": {
-    "x": 644,
-    "y": 284,
+    "x": 1019,
+    "y": 226,
     "z": 21000,
-    "height": 210,
-    "width": 612,
+    "height": 46,
+    "width": 237,
     "tabOrder": 21000
   },
   "visual": {
-    "visualType": "lineChart",
+    "visualType": "card",
     "query": {
       "queryState": {
-        "Category": {
-          "projections": [
-            {
-              "field": {
-                "Column": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "Date"
-                    }
-                  },
-                  "Property": "Month Start"
-                }
-              },
-              "queryRef": "Date.Month Start",
-              "nativeQueryRef": "Month",
-              "displayName": "Month"
-            }
-          ]
-        },
-        "Y": {
+        "Values": {
           "projections": [
             {
               "field": {
@@ -42,27 +23,65 @@
                       "Entity": "_Measures"
                     }
                   },
-                  "Property": "Cost Rolling 12M"
+                  "Property": "Generic % Change vs PY"
                 }
               },
-              "queryRef": "_Measures.Cost Rolling 12M",
-              "nativeQueryRef": "Cost (rolling 12 months)",
-              "displayName": "Cost (rolling 12 months)"
+              "queryRef": "_Measures.Generic % Change vs PY",
+              "nativeQueryRef": "vs prior year",
+              "displayName": "vs prior year"
             }
           ]
         }
       }
     },
     "objects": {
-      "dataPoint": [
+      "labels": [
         {
           "properties": {
-            "fill": {
+            "color": {
               "solid": {
                 "color": {
                   "expr": {
                     "Literal": {
-                      "Value": "'#B57D00'"
+                      "Value": "'#241B2F'"
+                    }
+                  }
+                }
+              }
+            },
+            "fontSize": {
+              "expr": {
+                "Literal": {
+                  "Value": "12D"
+                }
+              }
+            },
+            "fontFamily": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Segoe UI Semibold'"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "categoryLabels": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "color": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#5E556A'"
                     }
                   }
                 }
@@ -79,14 +98,7 @@
             "show": {
               "expr": {
                 "Literal": {
-                  "Value": "true"
-                }
-              }
-            },
-            "text": {
-              "expr": {
-                "Literal": {
-                  "Value": "'Net ingredient cost, rolling 12 months'"
+                  "Value": "false"
                 }
               }
             }

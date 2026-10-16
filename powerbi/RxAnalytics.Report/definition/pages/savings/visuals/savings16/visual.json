@@ -2,37 +2,18 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
   "name": "savings16",
   "position": {
-    "x": 24,
-    "y": 470,
+    "x": 957,
+    "y": 136,
     "z": 16000,
-    "height": 226,
-    "width": 400,
+    "height": 80,
+    "width": 299,
     "tabOrder": 16000
   },
   "visual": {
-    "visualType": "lineChart",
+    "visualType": "card",
     "query": {
       "queryState": {
-        "Category": {
-          "projections": [
-            {
-              "field": {
-                "Column": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "Date"
-                    }
-                  },
-                  "Property": "Month Start"
-                }
-              },
-              "queryRef": "Date.Month Start",
-              "nativeQueryRef": "Month",
-              "displayName": "Month"
-            }
-          ]
-        },
-        "Y": {
+        "Values": {
           "projections": [
             {
               "field": {
@@ -42,19 +23,50 @@
                       "Entity": "_Measures"
                     }
                   },
-                  "Property": "Generic % Rolling 12M"
+                  "Property": "Saving % of Branded Cost"
                 }
               },
-              "queryRef": "_Measures.Generic % Rolling 12M",
-              "nativeQueryRef": "Generic % (rolling 12 months)",
-              "displayName": "Generic % (rolling 12 months)"
+              "queryRef": "_Measures.Saving % of Branded Cost",
+              "nativeQueryRef": "Saving as % of that branded cost",
+              "displayName": "Saving as % of that branded cost"
             }
           ]
         }
       }
     },
-    "visualContainerObjects": {
-      "title": [
+    "objects": {
+      "labels": [
+        {
+          "properties": {
+            "color": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#241B2F'"
+                    }
+                  }
+                }
+              }
+            },
+            "fontSize": {
+              "expr": {
+                "Literal": {
+                  "Value": "22D"
+                }
+              }
+            },
+            "fontFamily": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Segoe UI Semibold'"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "categoryLabels": [
         {
           "properties": {
             "show": {
@@ -64,10 +76,29 @@
                 }
               }
             },
-            "text": {
+            "color": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#5E556A'"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
               "expr": {
                 "Literal": {
-                  "Value": "'Generic prescribing rate, rolling 12 months'"
+                  "Value": "false"
                 }
               }
             }

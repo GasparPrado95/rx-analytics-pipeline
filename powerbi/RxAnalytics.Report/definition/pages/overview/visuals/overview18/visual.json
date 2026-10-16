@@ -2,10 +2,10 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
   "name": "overview18",
   "position": {
-    "x": 273,
-    "y": 226,
+    "x": 1019,
+    "y": 136,
     "z": 18000,
-    "height": 46,
+    "height": 84,
     "width": 237,
     "tabOrder": 18000
   },
@@ -23,12 +23,12 @@
                       "Entity": "_Measures"
                     }
                   },
-                  "Property": "Cost YoY %"
+                  "Property": "Generic %"
                 }
               },
-              "queryRef": "_Measures.Cost YoY %",
-              "nativeQueryRef": "vs prior year",
-              "displayName": "vs prior year"
+              "queryRef": "_Measures.Generic %",
+              "nativeQueryRef": "Generic prescribing rate",
+              "displayName": "Generic prescribing rate"
             }
           ]
         }
@@ -52,7 +52,7 @@
             "fontSize": {
               "expr": {
                 "Literal": {
-                  "Value": "12D"
+                  "Value": "22D"
                 }
               }
             },

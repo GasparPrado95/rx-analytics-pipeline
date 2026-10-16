@@ -3,14 +3,14 @@
   "name": "quality21",
   "position": {
     "x": 736,
-    "y": 480,
+    "y": 248,
     "z": 21000,
-    "height": 216,
+    "height": 220,
     "width": 520,
     "tabOrder": 21000
   },
   "visual": {
-    "visualType": "lineChart",
+    "visualType": "clusteredColumnChart",
     "query": {
       "queryState": {
         "Category": {
@@ -20,15 +20,15 @@
                 "Column": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "Date"
+                      "Entity": "Prescriptions"
                     }
                   },
-                  "Property": "Month Start"
+                  "Property": "Arrival Lag Band"
                 }
               },
-              "queryRef": "Date.Month Start",
-              "nativeQueryRef": "Month",
-              "displayName": "Month"
+              "queryRef": "Prescriptions.Arrival Lag Band",
+              "nativeQueryRef": "Arrival lag",
+              "displayName": "Arrival lag"
             }
           ]
         },
@@ -42,29 +42,43 @@
                       "Entity": "_Measures"
                     }
                   },
-                  "Property": "Late Arrival %"
+                  "Property": "Prescription Lines"
                 }
               },
-              "queryRef": "_Measures.Late Arrival %",
-              "nativeQueryRef": "Late-arriving share",
-              "displayName": "Late-arriving share"
+              "queryRef": "_Measures.Prescription Lines",
+              "nativeQueryRef": "Lines",
+              "displayName": "Lines"
             }
           ]
         }
+      },
+      "sortDefinition": {
+        "sort": [
+          {
+            "field": {
+              "Column": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "Prescriptions"
+                  }
+                },
+                "Property": "Arrival Lag Band"
+              }
+            },
+            "direction": "Ascending"
+          }
+        ],
+        "isDefaultSort": true
       }
     },
     "objects": {
-      "dataPoint": [
+      "labels": [
         {
           "properties": {
-            "fill": {
-              "solid": {
-                "color": {
-                  "expr": {
-                    "Literal": {
-                      "Value": "'#B57D00'"
-                    }
-                  }
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
                 }
               }
             }
@@ -86,7 +100,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Late-arriving share by dispensing month'"
+                  "Value": "'Lines by days from dispensing to arrival'"
                 }
               }
             }

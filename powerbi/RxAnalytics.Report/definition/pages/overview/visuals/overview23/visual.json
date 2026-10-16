@@ -3,9 +3,9 @@
   "name": "overview23",
   "position": {
     "x": 644,
-    "y": 506,
+    "y": 284,
     "z": 23000,
-    "height": 190,
+    "height": 210,
     "width": 612,
     "tabOrder": 23000
   },
@@ -42,16 +42,35 @@
                       "Entity": "_Measures"
                     }
                   },
-                  "Property": "Generic %"
+                  "Property": "Cost Rolling 12M"
                 }
               },
-              "queryRef": "_Measures.Generic %",
-              "nativeQueryRef": "Generic prescribing rate",
-              "displayName": "Generic prescribing rate"
+              "queryRef": "_Measures.Cost Rolling 12M",
+              "nativeQueryRef": "Cost (rolling 12 months)",
+              "displayName": "Cost (rolling 12 months)"
             }
           ]
         }
       }
+    },
+    "objects": {
+      "dataPoint": [
+        {
+          "properties": {
+            "fill": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#B57D00'"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
     },
     "visualContainerObjects": {
       "title": [
@@ -67,7 +86,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Generic prescribing rate per month'"
+                  "Value": "'Net ingredient cost, rolling 12 months'"
                 }
               }
             }

@@ -2,7 +2,7 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
   "name": "regions13",
   "position": {
-    "x": 957,
+    "x": 335,
     "y": 136,
     "z": 13000,
     "height": 80,
@@ -23,12 +23,12 @@
                       "Entity": "_Measures"
                     }
                   },
-                  "Property": "Registered Patients"
+                  "Property": "Cost per 1,000 Patients"
                 }
               },
-              "queryRef": "_Measures.Registered Patients",
-              "nativeQueryRef": "Registered patients (panel)",
-              "displayName": "Registered patients (panel)"
+              "queryRef": "_Measures.Cost per 1,000 Patients",
+              "nativeQueryRef": "Cost per 1,000 patients / month",
+              "displayName": "Cost per 1,000 patients / month"
             }
           ]
         }

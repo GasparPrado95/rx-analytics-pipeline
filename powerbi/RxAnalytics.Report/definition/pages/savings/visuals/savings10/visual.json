@@ -2,11 +2,11 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
   "name": "savings10",
   "position": {
-    "x": 428,
+    "x": 24,
     "y": 80,
     "z": 10000,
-    "height": 46,
-    "width": 300,
+    "height": 50,
+    "width": 190,
     "tabOrder": 10000
   },
   "visual": {
@@ -20,15 +20,15 @@
                 "Column": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "Medicine"
+                      "Entity": "Date"
                     }
                   },
-                  "Property": "BNF Chapter"
+                  "Property": "Year"
                 }
               },
-              "queryRef": "Medicine.BNF Chapter",
-              "nativeQueryRef": "BNF chapter",
-              "displayName": "BNF chapter"
+              "queryRef": "Date.Year",
+              "nativeQueryRef": "Year",
+              "displayName": "Year"
             }
           ]
         }
@@ -48,6 +48,19 @@
           }
         }
       ],
+      "selection": [
+        {
+          "properties": {
+            "selectAllCheckboxEnabled": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            }
+          }
+        }
+      ],
       "header": [
         {
           "properties": {
@@ -61,20 +74,74 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'BNF chapter'"
+                  "Value": "'YEAR'"
+                }
+              }
+            },
+            "fontColor": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#6A3B98'"
+                    }
+                  }
+                }
+              }
+            },
+            "textSize": {
+              "expr": {
+                "Literal": {
+                  "Value": "8D"
+                }
+              }
+            },
+            "fontFamily": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Segoe UI Semibold'"
                 }
               }
             }
           }
         }
       ],
-      "selection": [
+      "items": [
         {
           "properties": {
-            "selectAllCheckboxEnabled": {
+            "fontColor": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#241B2F'"
+                    }
+                  }
+                }
+              }
+            },
+            "textSize": {
               "expr": {
                 "Literal": {
-                  "Value": "true"
+                  "Value": "10D"
+                }
+              }
+            },
+            "fontFamily": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Segoe UI'"
+                }
+              }
+            },
+            "background": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#FFFFFF'"
+                    }
+                  }
                 }
               }
             }
@@ -90,6 +157,68 @@
               "expr": {
                 "Literal": {
                   "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "background": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "color": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#FFFFFF'"
+                    }
+                  }
+                }
+              }
+            },
+            "transparency": {
+              "expr": {
+                "Literal": {
+                  "Value": "0D"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "border": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "color": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#E7E1D8'"
+                    }
+                  }
+                }
+              }
+            },
+            "radius": {
+              "expr": {
+                "Literal": {
+                  "Value": "8D"
                 }
               }
             }

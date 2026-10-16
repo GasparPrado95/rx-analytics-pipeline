@@ -2,10 +2,10 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
   "name": "quality13",
   "position": {
-    "x": 24,
-    "y": 172,
+    "x": 770,
+    "y": 82,
     "z": 13000,
-    "height": 64,
+    "height": 78,
     "width": 237,
     "tabOrder": 13000
   },
@@ -23,12 +23,12 @@
                       "Entity": "_Measures"
                     }
                   },
-                  "Property": "Duplicate Submissions Removed"
+                  "Property": "EL Success Rate"
                 }
               },
-              "queryRef": "_Measures.Duplicate Submissions Removed",
-              "nativeQueryRef": "Duplicates removed",
-              "displayName": "Duplicates removed"
+              "queryRef": "_Measures.EL Success Rate",
+              "nativeQueryRef": "EL run success rate",
+              "displayName": "EL run success rate"
             }
           ]
         }
@@ -52,7 +52,7 @@
             "fontSize": {
               "expr": {
                 "Literal": {
-                  "Value": "16D"
+                  "Value": "18D"
                 }
               }
             },

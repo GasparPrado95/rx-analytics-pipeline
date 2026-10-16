@@ -3,56 +3,96 @@
   "name": "regions10",
   "position": {
     "x": 24,
-    "y": 136,
+    "y": 80,
     "z": 10000,
-    "height": 80,
-    "width": 299,
+    "height": 50,
+    "width": 190,
     "tabOrder": 10000
   },
   "visual": {
-    "visualType": "card",
+    "visualType": "slicer",
     "query": {
       "queryState": {
         "Values": {
           "projections": [
             {
               "field": {
-                "Measure": {
+                "Column": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "_Measures"
+                      "Entity": "Date"
                     }
                   },
-                  "Property": "Items per 1,000 Patients"
+                  "Property": "Year"
                 }
               },
-              "queryRef": "_Measures.Items per 1,000 Patients",
-              "nativeQueryRef": "Items per 1,000 patients / month",
-              "displayName": "Items per 1,000 patients / month"
+              "queryRef": "Date.Year",
+              "nativeQueryRef": "Year",
+              "displayName": "Year"
             }
           ]
         }
       }
     },
     "objects": {
-      "labels": [
+      "data": [
         {
           "properties": {
-            "color": {
+            "mode": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Dropdown'"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "selection": [
+        {
+          "properties": {
+            "selectAllCheckboxEnabled": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "header": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'YEAR'"
+                }
+              }
+            },
+            "fontColor": {
               "solid": {
                 "color": {
                   "expr": {
                     "Literal": {
-                      "Value": "'#241B2F'"
+                      "Value": "'#6A3B98'"
                     }
                   }
                 }
               }
             },
-            "fontSize": {
+            "textSize": {
               "expr": {
                 "Literal": {
-                  "Value": "22D"
+                  "Value": "8D"
                 }
               }
             },
@@ -66,22 +106,40 @@
           }
         }
       ],
-      "categoryLabels": [
+      "items": [
         {
           "properties": {
-            "show": {
-              "expr": {
-                "Literal": {
-                  "Value": "true"
-                }
-              }
-            },
-            "color": {
+            "fontColor": {
               "solid": {
                 "color": {
                   "expr": {
                     "Literal": {
-                      "Value": "'#5E556A'"
+                      "Value": "'#241B2F'"
+                    }
+                  }
+                }
+              }
+            },
+            "textSize": {
+              "expr": {
+                "Literal": {
+                  "Value": "10D"
+                }
+              }
+            },
+            "fontFamily": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Segoe UI'"
+                }
+              }
+            },
+            "background": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#FFFFFF'"
                     }
                   }
                 }
@@ -99,6 +157,102 @@
               "expr": {
                 "Literal": {
                   "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "background": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "color": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#FFFFFF'"
+                    }
+                  }
+                }
+              }
+            },
+            "transparency": {
+              "expr": {
+                "Literal": {
+                  "Value": "0D"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "border": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "color": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#E7E1D8'"
+                    }
+                  }
+                }
+              }
+            },
+            "radius": {
+              "expr": {
+                "Literal": {
+                  "Value": "8D"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "padding": [
+        {
+          "properties": {
+            "top": {
+              "expr": {
+                "Literal": {
+                  "Value": "4D"
+                }
+              }
+            },
+            "bottom": {
+              "expr": {
+                "Literal": {
+                  "Value": "4D"
+                }
+              }
+            },
+            "left": {
+              "expr": {
+                "Literal": {
+                  "Value": "10D"
+                }
+              }
+            },
+            "right": {
+              "expr": {
+                "Literal": {
+                  "Value": "10D"
                 }
               }
             }

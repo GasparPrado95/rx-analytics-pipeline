@@ -2,11 +2,11 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
   "name": "savings05",
   "position": {
-    "x": 920,
-    "y": 18,
+    "x": 754,
+    "y": 19,
     "z": 5000,
-    "height": 30,
-    "width": 108,
+    "height": 28,
+    "width": 98,
     "tabOrder": 5000
   },
   "visual": {
@@ -42,7 +42,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Medicines'"
+                  "Value": "'Overview'"
                 }
               }
             },
@@ -60,7 +60,7 @@
             "fontSize": {
               "expr": {
                 "Literal": {
-                  "Value": "10D"
+                  "Value": "9.5D"
                 }
               }
             },
@@ -288,7 +288,7 @@
             "navigationSection": {
               "expr": {
                 "Literal": {
-                  "Value": "'medicines'"
+                  "Value": "'overview'"
                 }
               }
             }

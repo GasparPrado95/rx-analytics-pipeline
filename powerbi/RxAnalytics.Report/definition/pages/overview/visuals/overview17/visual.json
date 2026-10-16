@@ -2,10 +2,10 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
   "name": "overview17",
   "position": {
-    "x": 24,
-    "y": 226,
+    "x": 770,
+    "y": 136,
     "z": 17000,
-    "height": 46,
+    "height": 84,
     "width": 237,
     "tabOrder": 17000
   },
@@ -23,12 +23,12 @@
                       "Entity": "_Measures"
                     }
                   },
-                  "Property": "Items YoY %"
+                  "Property": "Items per 1,000 Patients"
                 }
               },
-              "queryRef": "_Measures.Items YoY %",
-              "nativeQueryRef": "vs prior year",
-              "displayName": "vs prior year"
+              "queryRef": "_Measures.Items per 1,000 Patients",
+              "nativeQueryRef": "Items per 1,000 patients / month",
+              "displayName": "Items per 1,000 patients / month"
             }
           ]
         }
@@ -52,7 +52,7 @@
             "fontSize": {
               "expr": {
                 "Literal": {
-                  "Value": "12D"
+                  "Value": "22D"
                 }
               }
             },

@@ -2,7 +2,7 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
   "name": "savings14",
   "position": {
-    "x": 957,
+    "x": 335,
     "y": 136,
     "z": 14000,
     "height": 80,
@@ -23,12 +23,12 @@
                       "Entity": "_Measures"
                     }
                   },
-                  "Property": "Saving % of Branded Cost"
+                  "Property": "Generic %"
                 }
               },
-              "queryRef": "_Measures.Saving % of Branded Cost",
-              "nativeQueryRef": "Saving as % of that branded cost",
-              "displayName": "Saving as % of that branded cost"
+              "queryRef": "_Measures.Generic %",
+              "nativeQueryRef": "Generic prescribing rate",
+              "displayName": "Generic prescribing rate"
             }
           ]
         }

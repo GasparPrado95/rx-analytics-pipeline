@@ -2,7 +2,7 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
   "name": "quality15",
   "position": {
-    "x": 522,
+    "x": 24,
     "y": 172,
     "z": 15000,
     "height": 64,
@@ -23,12 +23,12 @@
                       "Entity": "_Measures"
                     }
                   },
-                  "Property": "Imputed Cost Lines"
+                  "Property": "Duplicate Submissions Removed"
                 }
               },
-              "queryRef": "_Measures.Imputed Cost Lines",
-              "nativeQueryRef": "Lines with imputed cost",
-              "displayName": "Lines with imputed cost"
+              "queryRef": "_Measures.Duplicate Submissions Removed",
+              "nativeQueryRef": "Duplicates removed",
+              "displayName": "Duplicates removed"
             }
           ]
         }

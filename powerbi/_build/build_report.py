@@ -21,10 +21,13 @@ from pbir_lib import (
     categorical_filter,
     col,
     color,
+    image,
     labels_on,
+    lit,
     mea,
     nav_button,
-    slicer,
+    no_chrome,
+    s,
     sort_by,
     text,
     topn_filter,
@@ -119,19 +122,25 @@ TITLES = {
 }
 
 
+NAV = [("cover", "Home"), *PAGES]
+
+
 def header(page: Page, key: str) -> None:
     title, sub = TITLES[key]
-    text(page, 0, 0, 1280, 66, [
-        [("Prescribing Analytics  ·  ", 11, MUTED_ON_DARK, SANS), (title, 20, INK_ON_DARK, SERIF)],
-        [(f"{sub}.  Synthetic NHS England primary-care data, 2023–2025.", 9, MUTED_ON_DARK, SANS)],
-    ], bg=AUBERGINE)
+    text(page, 0, 0, 1280, 66, [[(" ", 1, AUBERGINE, SANS)]], bg=AUBERGINE)
+    text(page, 20, 4, 600, 60, [
+        [("PRESCRIBING ANALYTICS", 8, GOLD_RULE, SANS_BOLD)],
+        [(title, 18, INK_ON_DARK, SERIF)],
+        [(sub, 8.5, MUTED_ON_DARK, SANS)],
+    ])
     text(page, 0, 66, 1280, 3, [[(" ", 1, GOLD_RULE, SANS)]], bg=GOLD_RULE)
-    x = 1280 - 24 - len(PAGES) * 112
-    for name, label in PAGES:
+    w, gap = 98, 4
+    x = 1280 - 20 - len(NAV) * (w + gap) + gap
+    for name, label in NAV:
         active = name == key
-        nav_button(page, x, 18, 108, 30, name, label, fg=GOLD_RULE if active else MUTED_ON_DARK,
-                   hover="#4A2E66", size=10, font=SANS_BOLD if active else SANS, align="center")
-        x += 112
+        nav_button(page, x, 19, w, 28, name, label, fg=GOLD_RULE if active else MUTED_ON_DARK,
+                   hover="#4A2E66", size=9.5, font=SANS_BOLD if active else SANS, align="center")
+        x += w + gap
 
 
 def slicers(page: Page, which: list[str], y: int = 80) -> None:
@@ -141,7 +150,21 @@ def slicers(page: Page, which: list[str], y: int = 80) -> None:
     for key in which:
         entity, prop, label = spec[key]
         w = 300 if key == "chapter" else 190
-        slicer(page, x, y, w, 46, entity, prop, label)
+        page.add("slicer", x, y, w, 50, query={"Values": [col(entity, prop, label)]},
+                 objects={"data": [{"properties": {"mode": s("Dropdown")}}],
+                          "selection": [{"properties": {"selectAllCheckboxEnabled": lit("true")}}],
+                          "header": [{"properties": {"show": lit("true"), "text": s(label.upper()),
+                                                     "fontColor": color(PLUM), "textSize": lit("8D"),
+                                                     "fontFamily": s(SANS_BOLD)}}],
+                          "items": [{"properties": {"fontColor": color(INK), "textSize": lit("10D"),
+                                                    "fontFamily": s(SANS), "background": color(CARD)}}]},
+                 container={"title": [{"properties": {"show": lit("false")}}],
+                            "background": [{"properties": {"show": lit("true"), "color": color(CARD),
+                                                           "transparency": lit("0D")}}],
+                            "border": [{"properties": {"show": lit("true"), "color": color(BORDER),
+                                                       "radius": lit("8D")}}],
+                            "padding": [{"properties": {"top": lit("4D"), "bottom": lit("4D"),
+                                                        "left": lit("10D"), "right": lit("10D")}}]})
         x += w + 12
 
 
@@ -165,11 +188,59 @@ def series_color(c):
 
 
 # ------------------------------------------------------------------ pages
+COVER_IMG = "cover.jpg"   # made by make_cover.py (public-domain photo, plum/gold tritone)
+COVER_BG = "#24123A"      # deeper than the header band so the photo and tiles stand out
+COVER_TILE = "#341E50"
+CONTENTS = [
+    ("overview", "Executive overview", "Volume, cost, cost per item and generic prescribing, with year-on-year change"),
+    ("regions", "Regional variation", "Items per 1,000 patients by region, ICB, postcode district and deprivation"),
+    ("medicines", "Medicines & BNF drill-down", "Chapter to presentation: where items and money go, and seasonality"),
+    ("savings", "Generic vs branded", "Savings available where a generic exists, by medicine and over time"),
+    ("quality", "Data quality & pipeline health", "Defects found and fixed by dbt, late arrivals and EL run history"),
+]
+
+
+def cover() -> Page:
+    p = Page("cover", "Cover", background=COVER_BG)
+    image(p, 760, 0, 520, 720, COVER_IMG, scaling="Fill")
+    text(p, 744, 0, 16, 720, [[(" ", 1, GOLD_RULE, SANS)]], bg=GOLD_RULE)
+    text(p, 0, 0, 10, 720, [[(" ", 1, GOLD_RULE, SANS)]], bg=GOLD_RULE)
+    text(p, 64, 54, 660, 26, [[("NHS ENGLAND PRIMARY CARE   |   PRESCRIBING ANALYTICS", 10, GOLD_RULE, SANS_BOLD)]])
+    text(p, 64, 80, 670, 120, [[("Prescribing", 40, INK_ON_DARK, SERIF)],
+                               [("Analytics Dashboard", 40, INK_ON_DARK, "Segoe UI Light")]])
+    text(p, 64, 204, 140, 4, [[(" ", 1, GOLD_RULE, SANS)]], bg=GOLD_RULE)
+    text(p, 64, 218, 660, 56, [
+        [("2.5 million prescription lines from 400 GP practices in 42 Integrated Care Boards, 2023 to 2025:", 11,
+          MUTED_ON_DARK, SANS)],
+        [("SQL Server to BigQuery with dlt, modelled in dbt, analysed here.", 11, MUTED_ON_DARK, SANS)]])
+    text(p, 64, 282, 360, 22, [[("CONTENTS   (click to open; Ctrl+click while editing)", 8.5, "#A893C4", SANS)]])
+    y = 306
+    for i, (pid, title, desc) in enumerate(CONTENTS, 1):
+        text(p, 64, y + 2, 44, 40, [[(f"{i:02d}", 18, GOLD_RULE, "Segoe UI Light")]])
+        nav_button(p, 104, y, 470, 26, pid, f"{title}   ›", INK_ON_DARK, hover=COVER_TILE, size=12.5, font=SANS_BOLD)
+        text(p, 112, y + 26, 620, 18, [[(desc, 9, "#A893C4", SANS)]])
+        y += 48
+    tile = {**no_chrome(COVER_TILE), "border": [{"properties": {"show": lit("true"), "color": color("#4A2E66"),
+                                                                "radius": lit("8D")}}]}
+    for i, (m, label) in enumerate([("Total Items", "Items dispensed"), ("Total Cost", "Net ingredient cost"),
+                                    ("Generic %", "Generic prescribing rate"),
+                                    ("Potential Generic Saving", "Potential generic saving")]):
+        card(p, 64 + i * 166, 562, 154, 80, m, label, value_color=INK_ON_DARK, label_color=GOLD_RULE, size=18,
+             font="Segoe UI Light", container=tile)
+    text(p, 64, 656, 500, 48, [
+        [("Portfolio project by Gaspar Prado   |   dlt · BigQuery · dbt · Power BI", 8.5, "#A893C4", SANS)],
+        [("All data is synthetic: no real patients, prescribers or practices. Cover photo: apothecary bottles, "
+          "Sherbrooke Village Museum, by France3470 (public domain).", 8, "#A893C4", SANS)]])
+    card(p, 572, 662, 156, 28, "Data Through", "Data through", value_color=GOLD_RULE, size=9, font=SANS_BOLD,
+         show_label=False, container=no_chrome())
+    return p
+
+
 def overview() -> Page:
     p = Page("overview", "Overview")
     header(p, "overview")
     slicers(p, ["year", "region", "chapter"])
-    text(p, 880, 84, 376, 40, [[("Rates are monthly averages per 1,000 registered patients. "
+    text(p, 880, 86, 376, 40, [[("Rates are monthly averages per 1,000 registered patients. "
                                  "Change figures compare with the same period a year earlier.", 8, INK_2, SANS)]])
     kpi_row(p, 136, 84, [("Total Items", "Items dispensed"), ("Total Cost", "Net ingredient cost"),
                          ("Cost per Item", "Cost per item"), ("Items per 1,000 Patients", "Items per 1,000 patients / month"),
@@ -297,7 +368,8 @@ def quality() -> Page:
 def main() -> None:
     t = theme()
     write(ROOT / "theme" / "rx-plum-gold.json", copy.deepcopy(t))
-    build_report(ROOT, NAME, [overview(), regions(), medicines(), savings(), quality()], t, "rx-plum-gold.json")
+    build_report(ROOT, NAME, [cover(), overview(), regions(), medicines(), savings(), quality()], t, "rx-plum-gold.json",
+                 images=[(COVER_IMG, pathlib.Path(__file__).resolve().parent / "assets" / COVER_IMG)])
 
     # PBIP wrapper files for the MCP-authored semantic model
     sm = ROOT / f"{NAME}.SemanticModel"

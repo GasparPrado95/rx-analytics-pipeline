@@ -2,15 +2,15 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
   "name": "regions16",
   "position": {
-    "x": 436,
+    "x": 24,
     "y": 228,
     "z": 16000,
-    "height": 468,
-    "width": 360,
+    "height": 222,
+    "width": 400,
     "tabOrder": 16000
   },
   "visual": {
-    "visualType": "map",
+    "visualType": "clusteredBarChart",
     "query": {
       "queryState": {
         "Category": {
@@ -23,34 +23,15 @@
                       "Entity": "Practice"
                     }
                   },
-                  "Property": "Postcode District"
+                  "Property": "Region"
                 }
               },
-              "queryRef": "Practice.Postcode District",
-              "nativeQueryRef": "Postcode District"
+              "queryRef": "Practice.Region",
+              "nativeQueryRef": "Region"
             }
           ]
         },
-        "Size": {
-          "projections": [
-            {
-              "field": {
-                "Measure": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "_Measures"
-                    }
-                  },
-                  "Property": "Total Items"
-                }
-              },
-              "queryRef": "_Measures.Total Items",
-              "nativeQueryRef": "Items",
-              "displayName": "Items"
-            }
-          ]
-        },
-        "Tooltips": {
+        "Y": {
           "projections": [
             {
               "field": {
@@ -69,20 +50,34 @@
             }
           ]
         }
+      },
+      "sortDefinition": {
+        "sort": [
+          {
+            "field": {
+              "Measure": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "_Measures"
+                  }
+                },
+                "Property": "Items per 1,000 Patients"
+              }
+            },
+            "direction": "Descending"
+          }
+        ],
+        "isDefaultSort": true
       }
     },
     "objects": {
-      "dataPoint": [
+      "labels": [
         {
           "properties": {
-            "defaultColor": {
-              "solid": {
-                "color": {
-                  "expr": {
-                    "Literal": {
-                      "Value": "'#6A3B98'"
-                    }
-                  }
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
                 }
               }
             }
@@ -104,7 +99,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Practices by postcode district (bubble = items)'"
+                  "Value": "'Items per 1,000 patients by NHS region'"
                 }
               }
             }

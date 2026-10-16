@@ -2,11 +2,11 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
   "name": "regions02",
   "position": {
-    "x": 0,
-    "y": 66,
+    "x": 20,
+    "y": 4,
     "z": 2000,
-    "height": 3,
-    "width": 1280,
+    "height": 60,
+    "width": 600,
     "tabOrder": 2000
   },
   "visual": {
@@ -19,11 +19,37 @@
               {
                 "textRuns": [
                   {
-                    "value": " ",
+                    "value": "PRESCRIBING ANALYTICS",
+                    "textStyle": {
+                      "fontFamily": "Segoe UI Semibold",
+                      "fontSize": "8pt",
+                      "color": "#C9A227"
+                    }
+                  }
+                ],
+                "horizontalTextAlignment": "left"
+              },
+              {
+                "textRuns": [
+                  {
+                    "value": "Regional variation",
+                    "textStyle": {
+                      "fontFamily": "Georgia",
+                      "fontSize": "18pt",
+                      "color": "#F3EDF9"
+                    }
+                  }
+                ],
+                "horizontalTextAlignment": "left"
+              },
+              {
+                "textRuns": [
+                  {
+                    "value": "Prescribing rates per 1,000 registered patients by region, ICB and deprivation",
                     "textStyle": {
                       "fontFamily": "Segoe UI",
-                      "fontSize": "1pt",
-                      "color": "#C9A227"
+                      "fontSize": "8.5pt",
+                      "color": "#CDBDE3"
                     }
                   }
                 ],
@@ -127,25 +153,7 @@
             "show": {
               "expr": {
                 "Literal": {
-                  "Value": "true"
-                }
-              }
-            },
-            "color": {
-              "solid": {
-                "color": {
-                  "expr": {
-                    "Literal": {
-                      "Value": "'#C9A227'"
-                    }
-                  }
-                }
-              }
-            },
-            "transparency": {
-              "expr": {
-                "Literal": {
-                  "Value": "0D"
+                  "Value": "false"
                 }
               }
             }

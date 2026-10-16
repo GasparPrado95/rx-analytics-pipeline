@@ -2,37 +2,18 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
   "name": "regions15",
   "position": {
-    "x": 24,
-    "y": 462,
+    "x": 957,
+    "y": 136,
     "z": 15000,
-    "height": 234,
-    "width": 400,
+    "height": 80,
+    "width": 299,
     "tabOrder": 15000
   },
   "visual": {
-    "visualType": "clusteredColumnChart",
+    "visualType": "card",
     "query": {
       "queryState": {
-        "Category": {
-          "projections": [
-            {
-              "field": {
-                "Column": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "Practice"
-                    }
-                  },
-                  "Property": "Deprivation Quintile"
-                }
-              },
-              "queryRef": "Practice.Deprivation Quintile",
-              "nativeQueryRef": "Deprivation quintile",
-              "displayName": "Deprivation quintile"
-            }
-          ]
-        },
-        "Y": {
+        "Values": {
           "projections": [
             {
               "field": {
@@ -42,43 +23,67 @@
                       "Entity": "_Measures"
                     }
                   },
-                  "Property": "Items per 1,000 Patients"
+                  "Property": "Registered Patients"
                 }
               },
-              "queryRef": "_Measures.Items per 1,000 Patients",
-              "nativeQueryRef": "Items per 1,000 patients",
-              "displayName": "Items per 1,000 patients"
+              "queryRef": "_Measures.Registered Patients",
+              "nativeQueryRef": "Registered patients (panel)",
+              "displayName": "Registered patients (panel)"
             }
           ]
         }
-      },
-      "sortDefinition": {
-        "sort": [
-          {
-            "field": {
-              "Column": {
-                "Expression": {
-                  "SourceRef": {
-                    "Entity": "Practice"
-                  }
-                },
-                "Property": "Deprivation Quintile"
-              }
-            },
-            "direction": "Ascending"
-          }
-        ],
-        "isDefaultSort": true
       }
     },
     "objects": {
       "labels": [
         {
           "properties": {
+            "color": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#241B2F'"
+                    }
+                  }
+                }
+              }
+            },
+            "fontSize": {
+              "expr": {
+                "Literal": {
+                  "Value": "22D"
+                }
+              }
+            },
+            "fontFamily": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Segoe UI Semibold'"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "categoryLabels": [
+        {
+          "properties": {
             "show": {
               "expr": {
                 "Literal": {
                   "Value": "true"
+                }
+              }
+            },
+            "color": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#5E556A'"
+                    }
+                  }
                 }
               }
             }
@@ -93,14 +98,7 @@
             "show": {
               "expr": {
                 "Literal": {
-                  "Value": "true"
-                }
-              }
-            },
-            "text": {
-              "expr": {
-                "Literal": {
-                  "Value": "'Items per 1,000 patients by practice deprivation'"
+                  "Value": "false"
                 }
               }
             }

@@ -2,7 +2,7 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
   "name": "savings13",
   "position": {
-    "x": 646,
+    "x": 24,
     "y": 136,
     "z": 13000,
     "height": 80,
@@ -23,12 +23,12 @@
                       "Entity": "_Measures"
                     }
                   },
-                  "Property": "Branded Items Where Generic Available"
+                  "Property": "Potential Generic Saving"
                 }
               },
-              "queryRef": "_Measures.Branded Items Where Generic Available",
-              "nativeQueryRef": "Branded items with a generic",
-              "displayName": "Branded items with a generic"
+              "queryRef": "_Measures.Potential Generic Saving",
+              "nativeQueryRef": "Potential saving",
+              "displayName": "Potential saving"
             }
           ]
         }
