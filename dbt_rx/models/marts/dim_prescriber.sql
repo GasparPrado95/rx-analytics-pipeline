@@ -7,4 +7,4 @@ select
     p.practice_code,
     p.start_date
 from {{ ref('stg_rx__prescribers') }} as p
-inner join {{ ref('stg_rx__prescriber_types') }} as t on t.prescriber_type_code = p.prescriber_type_code
+inner join {{ ref('stg_rx__prescriber_types') }} as t on p.prescriber_type_code = t.prescriber_type_code

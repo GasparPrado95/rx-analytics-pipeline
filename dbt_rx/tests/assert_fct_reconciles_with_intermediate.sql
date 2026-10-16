@@ -10,11 +10,18 @@ with expected as (
 ),
 
 actual as (
-    select count(*) as lines, sum(items) as items, round(sum(net_ingredient_cost), 2) as nic
+    select
+        count(*) as lines,
+        sum(items) as items,
+        round(sum(net_ingredient_cost), 2) as nic
     from {{ ref('fct_prescription_items') }}
 )
 
-select e.*, a.lines as fact_lines, a.items as fact_items, a.nic as fact_nic
+select
+    e.*,
+    a.lines as fact_lines,
+    a.items as fact_items,
+    a.nic as fact_nic
 from expected as e
 cross join actual as a
 where e.lines != a.lines or e.items != a.items or abs(e.nic - a.nic) > 0.01

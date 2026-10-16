@@ -18,31 +18,46 @@ with lines as (
     select *
     from {{ ref('int_prescription_items__priced') }}
     where not is_duplicate_submission
-    {% if is_incremental() %}
-        and updated_at >= (
-            select timestamp_sub(max(updated_at), interval {{ var('incremental_lookback_hours') }} hour)
-            from {{ this }}
-        )
-    {% endif %}
+        {% if is_incremental() %}
+            and updated_at >= (
+                select timestamp_sub(max(existing.updated_at), interval {{ var('incremental_lookback_hours') }} hour)
+                from {{ this }} as existing
+            )
+        {% endif %}
 ),
 
 headers as (
-    select prescription_id, patient_id, prescriber_id, practice_code, issue_date
+    select
+        prescription_id,
+        patient_id,
+        prescriber_id,
+        practice_code,
+        issue_date
     from {{ ref('stg_rx__prescriptions') }}
 ),
 
 patients as (
-    select patient_id, age_band, sex, imd_decile
+    select
+        patient_id,
+        age_band,
+        sex,
+        imd_decile
     from {{ ref('stg_rx__patients') }}
 ),
 
 practices as (
-    select practice_code, icb_code, region_code
+    select
+        practice_code,
+        icb_code,
+        region_code
     from {{ ref('int_practices__enriched') }}
 ),
 
 medicines as (
-    select presentation_code, chapter_code, generic_available
+    select
+        presentation_code,
+        chapter_code,
+        generic_available
     from {{ ref('int_medicines__bnf_hierarchy') }}
 )
 
@@ -83,7 +98,7 @@ select
     l.updated_at,
     current_timestamp() as dbt_loaded_at
 from lines as l
-inner join headers as h on h.prescription_id = l.prescription_id
-inner join patients as pt on pt.patient_id = h.patient_id
-inner join practices as pr on pr.practice_code = h.practice_code
-inner join medicines as m on m.presentation_code = l.presentation_code
+inner join headers as h on l.prescription_id = h.prescription_id
+inner join patients as pt on h.patient_id = pt.patient_id
+inner join practices as pr on h.practice_code = pr.practice_code
+inner join medicines as m on l.presentation_code = m.presentation_code
