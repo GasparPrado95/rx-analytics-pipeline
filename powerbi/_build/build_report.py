@@ -128,10 +128,10 @@ NAV = [("cover", "Home"), *PAGES]
 def header(page: Page, key: str) -> None:
     title, sub = TITLES[key]
     text(page, 0, 0, 1280, 66, [[(" ", 1, AUBERGINE, SANS)]], bg=AUBERGINE)
-    text(page, 20, 4, 600, 60, [
-        [("PRESCRIBING ANALYTICS", 8, GOLD_RULE, SANS_BOLD)],
-        [(title, 18, INK_ON_DARK, SERIF)],
-        [(sub, 8.5, MUTED_ON_DARK, SANS)],
+    text(page, 20, 2, 600, 64, [
+        [("PRESCRIBING ANALYTICS", 7.5, GOLD_RULE, SANS_BOLD)],
+        [(title, 15, INK_ON_DARK, SERIF)],
+        [(sub, 8, MUTED_ON_DARK, SANS)],
     ])
     text(page, 0, 66, 1280, 3, [[(" ", 1, GOLD_RULE, SANS)]], bg=GOLD_RULE)
     w, gap = 98, 4
@@ -143,14 +143,14 @@ def header(page: Page, key: str) -> None:
         x += w + gap
 
 
-def slicers(page: Page, which: list[str], y: int = 80) -> None:
+def slicers(page: Page, which: list[str], y: int = 76) -> None:
     spec = {"year": ("Date", "Year", "Year"), "region": ("Practice", "Region", "Region"),
             "chapter": ("Medicine", "BNF Chapter", "BNF chapter")}
     x = 24
     for key in which:
         entity, prop, label = spec[key]
         w = 300 if key == "chapter" else 190
-        page.add("slicer", x, y, w, 50, query={"Values": [col(entity, prop, label)]},
+        page.add("slicer", x, y, w, 56, query={"Values": [col(entity, prop, label)]},
                  objects={"data": [{"properties": {"mode": s("Dropdown")}}],
                           "selection": [{"properties": {"selectAllCheckboxEnabled": lit("true")}}],
                           "header": [{"properties": {"show": lit("true"), "text": s(label.upper()),

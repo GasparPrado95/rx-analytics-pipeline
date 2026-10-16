@@ -3,9 +3,9 @@
   "name": "quality02",
   "position": {
     "x": 20,
-    "y": 4,
+    "y": 2,
     "z": 2000,
-    "height": 60,
+    "height": 64,
     "width": 600,
     "tabOrder": 2000
   },
@@ -22,7 +22,7 @@
                     "value": "PRESCRIBING ANALYTICS",
                     "textStyle": {
                       "fontFamily": "Segoe UI Semibold",
-                      "fontSize": "8pt",
+                      "fontSize": "7.5pt",
                       "color": "#C9A227"
                     }
                   }
@@ -35,7 +35,7 @@
                     "value": "Data quality & pipeline health",
                     "textStyle": {
                       "fontFamily": "Georgia",
-                      "fontSize": "18pt",
+                      "fontSize": "15pt",
                       "color": "#F3EDF9"
                     }
                   }
@@ -48,7 +48,7 @@
                     "value": "What the pipeline found, fixed and loaded",
                     "textStyle": {
                       "fontFamily": "Segoe UI",
-                      "fontSize": "8.5pt",
+                      "fontSize": "8pt",
                       "color": "#CDBDE3"
                     }
                   }
