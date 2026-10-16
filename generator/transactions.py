@@ -191,17 +191,25 @@ def build_transactions(rng: np.random.Generator, org: Organisations, med: Medici
 
     # --- arrival timestamps: normal submission lag, plus late arrivals ---
     as_of = np.datetime64(cfg.AS_OF) + np.timedelta64(86399, "s")
+
+    def cap(ts: np.ndarray) -> np.ndarray:
+        """Timestamps past the source snapshot land in its last 3 days (not all on one instant)."""
+        over = ts > as_of
+        ts = ts.copy()
+        ts[over] = as_of - rng.integers(0, 3 * 86400, over.sum()) * SECOND
+        return ts
     sub_lag = np.minimum(2 + rng.geometric(0.25, n_lines), 28)
     created = l_disp + sub_lag * DAY + rng.integers(6 * 3600, 22 * 3600, n_lines) * SECOND
     late = rng.random(n_lines) < dq.late_arrival_rate
     created[late] = l_disp[late] + rng.integers(35, 151, late.sum()) * DAY + rng.integers(0, 86400, late.sum()) * SECOND
-    created = np.minimum(created, as_of)
+    created = cap(created)
     updated = created.copy()
 
     # Corrections: restated later with a different quantity; updated_at moves on.
     corrected = rng.random(n_lines) < dq.correction_rate
     quantity[corrected] = np.maximum(1, np.rint(quantity[corrected] * rng.choice([0.5, 2.0], corrected.sum())))
-    updated[corrected] = np.minimum(created[corrected] + rng.integers(20, 201, corrected.sum()) * DAY, as_of)
+    updated[corrected] = np.maximum(cap(created[corrected] + rng.integers(20, 201, corrected.sum()) * DAY),
+                                created[corrected])
 
     nic = np.round(quantity * unit_cost, 2)
     actual = np.round(nic * discount, 2)
@@ -214,7 +222,7 @@ def build_transactions(rng: np.random.Generator, org: Organisations, med: Medici
 
     # --- duplicates: double-submitted lines, new id, same content ---
     dup_src = np.where(rng.random(n_lines) < dq.duplicate_line_rate)[0]
-    dup_created = np.minimum(created[dup_src] + rng.integers(60, 3 * 86400, len(dup_src)) * SECOND, as_of)
+    dup_created = cap(created[dup_src] + rng.integers(60, 3 * 86400, len(dup_src)) * SECOND)
 
     def with_dups(a):
         return np.concatenate([a, a[dup_src]])
