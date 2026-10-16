@@ -8,6 +8,7 @@
 from __future__ import annotations
 
 import argparse
+import json
 import logging
 import sys
 import warnings
@@ -28,6 +29,7 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
                    help="comma-separated subset of tables (default: all in config)")
     p.add_argument("--config", type=Path, default=DEFAULT_CONFIG)
     p.add_argument("--log-dir", type=Path, default=REPO_ROOT / "logs")
+    p.add_argument("--summary-json", type=Path, help="write a machine-readable run summary (used by orchestration)")
     p.add_argument("-v", "--verbose", action="store_true")
     return p.parse_args(argv)
 
@@ -52,6 +54,21 @@ def setup_logging(log_dir: Path, verbose: bool) -> Path:
     return log_file
 
 
+def write_summary(path: Path, result, tables, error: str | None = None) -> None:
+    """result: el.pipeline.RunResult, or None when the run failed before producing one."""
+    summary = {
+        "status": result.status if result else "failed",
+        "run_id": result.run_id if result else None,
+        "duration_seconds": (result.finished_at - result.started_at).total_seconds() if result else None,
+        "rows": result.rows if result else {},
+        "watermarks": {k: str(v) for k, v in (result.watermark_after if result else {}).items()},
+        "tables": [t.name for t in tables],
+        "error": error,
+    }
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps(summary, indent=2), encoding="utf-8")
+
+
 def main(argv: list[str] | None = None) -> int:
     args = parse_args(argv)
     log_file = setup_logging(args.log_dir, args.verbose)
@@ -69,9 +86,13 @@ def main(argv: list[str] | None = None) -> int:
     except SettingsError as exc:
         log.error("settings error: %s", exc)
         return 2
-    except Exception:
+    except Exception as exc:
         log.exception("EL run failed (details in %s)", log_file)
+        if args.summary_json:
+            write_summary(args.summary_json, None, tables, error=f"{type(exc).__name__}: {exc}")
         return 1
+    if args.summary_json:
+        write_summary(args.summary_json, result, tables)
 
     secs = (result.finished_at - result.started_at).total_seconds()
     log.info("run %s succeeded in %.0fs", result.run_id, secs)
