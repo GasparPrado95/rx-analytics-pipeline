@@ -1,0 +1,75 @@
+version: 2
+
+models:
+  - name: int_practices__enriched
+    description: >
+      Practice joined to its ICB and region, plus the size of the simulated patient panel.
+      The generator simulates prescribing for a sample of each practice's patients (50k in total)
+      while `list_size` is the full registered list, so per-patient rates use `registered_patients`.
+    columns:
+      - name: practice_code
+        description: Practice.
+        data_tests: [unique, not_null]
+      - name: registered_patients
+        description: Patients in the simulated panel registered at the practice (rate denominator).
+        data_tests:
+          - dbt_expectations.expect_column_values_to_be_between:
+              arguments:
+                min_value: 1
+
+  - name: int_medicines__bnf_hierarchy
+    description: Presentation flattened up the BNF hierarchy, with generic-availability flags.
+    columns:
+      - name: presentation_code
+        description: Medicine.
+        data_tests: [unique, not_null]
+      - name: generic_available
+        description: >
+          True for generics, and for branded presentations that have a generic equivalent.
+          Brand-only medicines (no generic on the market) are False.
+      - name: chemical_has_generic
+        description: True if any generic presentation exists for the chemical substance.
+
+  - name: int_prescription_items__flagged
+    description: >
+      Prescription lines with data-quality flags. Nothing is dropped here, so the DQ mart can
+      count each condition.
+    columns:
+      - name: is_duplicate_submission
+        description: >
+          Same prescription, presentation and dispensing date as an earlier-arriving line: a double
+          submission under a new id. The earliest arrival is kept. Quantity and cost are not part of
+          the key, so a later correction cannot change which line counts (keeps incremental and
+          full rebuilds consistent).
+      - name: arrival_lag_days
+        description: Days between dispensing and the line reaching the source.
+      - name: is_late_arrival
+        description: arrival_lag_days greater than var('late_arrival_days') (30).
+      - name: is_restated
+        description: The line was corrected after it first arrived (updated_at > created_at).
+      - name: is_credit
+        description: Negative quantity or cost (a credit note reversing an earlier line).
+
+  - name: int_prescription_items__priced
+    description: >
+      Flagged lines priced at their dispensing date from the price history, with cost gaps
+      imputed and flagged, and the potential saving from switching branded lines to generic.
+    columns:
+      - name: tariff_unit_cost
+        description: Unit cost of the dispensed presentation in force on the dispensing date.
+      - name: generic_tariff_unit_cost
+        description: Unit cost of the generic equivalent on the dispensing date (branded lines only).
+      - name: net_ingredient_cost_filled
+        description: Source NIC, or quantity x tariff_unit_cost when missing.
+      - name: actual_cost_filled
+        description: Source actual cost, or NIC x var('actual_cost_to_nic_ratio') when missing.
+      - name: is_nic_imputed
+        description: NIC was missing and has been imputed.
+      - name: is_actual_cost_imputed
+        description: Actual cost was missing and has been imputed.
+      - name: is_quantity_missing
+        description: Quantity is NULL in the source.
+      - name: potential_generic_saving
+        description: >
+          For branded lines with a generic equivalent: (branded price - generic price) x quantity
+          at dispensing-date prices. Zero otherwise.

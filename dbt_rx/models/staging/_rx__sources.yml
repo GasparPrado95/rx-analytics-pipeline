@@ -1,0 +1,69 @@
+version: 2
+
+sources:
+  - name: rx
+    description: >
+      Raw copy of the RxSource SQL Server database (synthetic NHS England primary-care prescribing),
+      loaded unchanged into BigQuery by the dlt pipeline in `el/` (Phase 2).
+    database: "{{ env_var('GCP_PROJECT_ID') }}"
+    schema: "{{ var('raw_dataset') }}"
+    config:
+      # Source activity: how recently did the source system produce or change data?
+      freshness:
+        warn_after: {count: 7, period: day}
+        error_after: {count: 30, period: day}
+      loaded_at_field: updated_at
+
+    tables:
+      - name: region
+        description: NHS England regions (7).
+        config: {freshness: null}
+      - name: icb
+        description: Integrated Care Boards (42), each in one region.
+        config: {freshness: null}
+      - name: practice
+        description: GP practices with list size, deprivation and a free-text rural/urban flag.
+        config: {freshness: null}
+      - name: prescriber_type
+        description: Lookup of prescriber professions.
+        config: {freshness: null, loaded_at_field: null}
+      - name: prescriber
+        description: Prescribers (GPs, nurse and pharmacist independent prescribers).
+        config: {freshness: null}
+      - name: bnf_chapter
+        config: {freshness: null, loaded_at_field: null}
+      - name: bnf_section
+        config: {freshness: null, loaded_at_field: null}
+      - name: bnf_paragraph
+        config: {freshness: null, loaded_at_field: null}
+      - name: bnf_chemical
+        config: {freshness: null, loaded_at_field: null}
+      - name: medicine
+        description: >
+          BNF presentations with their CURRENT unit cost. Price changes overwrite unit_cost and bump
+          updated_at, which the `snap_medicine_prices` snapshot turns into SCD2 history.
+        config: {freshness: null}
+      - name: medicine_price_history
+        description: Source-maintained Drug Tariff-style price history (one open row per medicine).
+        config: {freshness: null, loaded_at_field: created_at}
+      - name: patient
+        description: Synthetic patients, banded only (age band, sex, deprivation decile). No PII.
+        config: {freshness: null}
+      - name: prescription
+        description: Prescription headers (patient, prescriber, practice, issue date). Loaded incrementally.
+        # No freshness check: new headers stop with the 2023-2025 data period. Ongoing activity
+        # (late lines, corrections) shows up on prescription_item, which is checked.
+        config: {freshness: null}
+      - name: prescription_item
+        description: >
+          Prescription lines. Loaded incrementally (merge on item_line_id, watermark on updated_at).
+          Contains deliberate defects: double submissions, late arrivals, restatements, NULL costs,
+          credit lines.
+      - name: el_run_log
+        description: One row per table per EL run, written by the dlt pipeline.
+        config:
+          # Pipeline freshness: has the EL job run recently? (distinct from source activity)
+          loaded_at_field: finished_at
+          freshness:
+            warn_after: {count: 2, period: day}
+            error_after: {count: 7, period: day}

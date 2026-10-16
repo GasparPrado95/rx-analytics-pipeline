@@ -1,0 +1,430 @@
+version: 2
+
+models:
+  # ------------------------------------------------------------------ fact
+  - name: fct_prescription_items
+    description: >
+      **Fact table** of the star schema. Grain: one dispensed prescription line, with double
+      submissions removed. Incremental (MERGE on `item_line_id`) over lines whose `updated_at`
+      moved past the table's high-watermark, so late arrivals land in their dispensing month and
+      restatements update in place. Partitioned by dispensing month and clustered by ICB and BNF
+      chapter, the filters most dashboard queries use.
+    data_tests:
+      - dbt_expectations.expect_table_row_count_to_be_between:
+          arguments:
+            min_value: 2000000
+            max_value: 3000000
+      - dbt_utils.expression_is_true:
+          arguments:
+            expression: "abs(actual_cost) <= abs(net_ingredient_cost)"
+          config:
+            where: "net_ingredient_cost is not null"
+    columns:
+      - name: item_line_id
+        description: Primary key (source line id).
+        data_tests: [unique, not_null]
+      - name: prescription_id
+        description: Prescription header (degenerate dimension).
+        data_tests: [not_null]
+      - name: dispensing_date
+        description: Date dispensed. Partition column (monthly).
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_date')
+                field: date_day
+      - name: issue_date
+        description: Date the prescription was issued.
+        data_tests: [not_null]
+      - name: presentation_code
+        description: Medicine dispensed.
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_medicine')
+                field: presentation_code
+      - name: bnf_chapter_code
+        description: BNF chapter of the medicine (cluster key).
+      - name: practice_code
+        description: Issuing practice.
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_practice')
+                field: practice_code
+      - name: icb_code
+        description: ICB of the issuing practice (cluster key).
+        data_tests: [not_null]
+      - name: region_code
+        description: Region of the issuing practice.
+      - name: prescriber_id
+        description: Issuing prescriber.
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_prescriber')
+                field: prescriber_id
+      - name: patient_band_key
+        description: Patient band (age band x sex x deprivation decile). No patient-level key.
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_patient_band')
+                field: patient_band_key
+      - name: items
+        description: Items dispensed; negative for credit lines.
+      - name: quantity
+        description: Quantity in the medicine's unit of measure (NULL in a few rows).
+      - name: net_ingredient_cost
+        description: Net ingredient cost (GBP), imputed where the source was missing it.
+        data_tests: [not_null]
+      - name: actual_cost
+        description: Actual cost (GBP), imputed where the source was missing it.
+        data_tests: [not_null]
+      - name: tariff_unit_cost
+        description: Unit price in force on the dispensing date.
+        data_tests: [not_null]
+      - name: potential_generic_saving
+        description: Saving (GBP) had a branded line been dispensed as its generic equivalent.
+        data_tests:
+          - dbt_expectations.expect_column_values_to_be_between:
+              arguments:
+                min_value: 0
+      - name: is_generic
+        description: Line dispensed as a generic.
+        data_tests: [not_null]
+      - name: generic_available
+        description: A generic exists for the dispensed presentation.
+        data_tests: [not_null]
+      - name: is_credit
+        description: Credit line (negative quantity/cost).
+        data_tests: [not_null]
+      - name: is_late_arrival
+        description: Reached the source more than 30 days after dispensing.
+        data_tests: [not_null]
+      - name: arrival_lag_days
+        description: Days between dispensing and arrival in the source.
+      - name: is_restated
+        description: Corrected after first arrival.
+        data_tests: [not_null]
+      - name: is_nic_imputed
+        description: Net ingredient cost was imputed.
+        data_tests: [not_null]
+      - name: is_actual_cost_imputed
+        description: Actual cost was imputed.
+        data_tests: [not_null]
+      - name: is_quantity_missing
+        description: Quantity missing in the source.
+        data_tests: [not_null]
+      - name: source_created_at
+        description: When the line first reached the source.
+      - name: updated_at
+        description: Source watermark; drives the incremental merge.
+        data_tests: [not_null, not_in_future]
+      - name: dbt_loaded_at
+        description: When dbt last wrote the row.
+
+  # ------------------------------------------------------------------ dimensions
+  - name: dim_medicine
+    description: Medicine dimension with the full BNF hierarchy (chapter > section > paragraph > chemical > presentation).
+    columns:
+      - name: presentation_code
+        description: Primary key. Fifteen-character BNF-style code.
+        data_tests: [unique, not_null]
+      - name: presentation_name
+        description: Presentation name.
+      - name: generic_or_branded
+        description: Generic / Branded.
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: ["Generic", "Branded"]
+      - name: is_generic
+        description: True for generics.
+      - name: brand_name
+        description: Brand (branded presentations only).
+      - name: generic_available
+        description: A generic exists for this presentation (always True for generics).
+      - name: generic_equivalent_code
+        description: Generic equivalent of a branded presentation.
+      - name: generic_equivalent_name
+        description: Name of the generic equivalent.
+      - name: form
+        description: Dosage form.
+      - name: strength
+        description: Strength.
+      - name: unit_of_measure
+        description: Unit of quantity and price.
+      - name: pack_quantity
+        description: Typical quantity per item.
+      - name: current_unit_cost
+        description: Current price per unit (GBP). Historic prices are in the price history / snapshot.
+      - name: chemical_code
+        description: BNF chemical substance code.
+      - name: chemical_name
+        description: Chemical substance.
+      - name: paragraph_code
+        description: BNF paragraph code.
+      - name: paragraph_name
+        description: BNF paragraph.
+      - name: section_code
+        description: BNF section code.
+      - name: section_name
+        description: BNF section.
+      - name: chapter_code
+        description: BNF chapter code.
+        data_tests: [not_null]
+      - name: chapter_name
+        description: BNF chapter.
+      - name: chapter_label
+        description: Code and name, e.g. "05 Infections".
+
+  - name: dim_practice
+    description: Practice dimension with ICB and region (organisation hierarchy region > ICB > practice).
+    data_tests:
+      - dbt_expectations.expect_table_row_count_to_equal:
+          arguments:
+            value: 400
+    columns:
+      - name: practice_code
+        description: Primary key.
+        data_tests: [unique, not_null]
+      - name: practice_name
+        description: Practice name (synthetic).
+      - name: postcode_district
+        description: Outward postcode for maps (NULL for 3 practices).
+      - name: postcode_area
+        description: Postcode area letters.
+      - name: country
+        description: Always "United Kingdom"; helps map visuals geocode the postcode.
+      - name: list_size
+        description: Full registered list size (context only).
+      - name: registered_patients
+        description: Simulated patient panel size. Denominator for "per 1,000 patients" rates.
+      - name: rural_urban
+        description: Urban / Rural.
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: ["Urban", "Rural"]
+      - name: practice_imd_decile
+        description: Deprivation decile of the practice area (1 = most deprived).
+      - name: practice_imd_quintile
+        description: Deprivation quintile label.
+      - name: opened_date
+        description: Opening date.
+      - name: icb_code
+        description: ICB code.
+        data_tests: [not_null]
+      - name: icb_name
+        description: ICB name.
+      - name: region_code
+        description: Region code.
+      - name: region_ons_code
+        description: ONS region code.
+      - name: region_name
+        description: Region name.
+
+  - name: dim_prescriber
+    description: Prescriber dimension (synthetic names).
+    columns:
+      - name: prescriber_id
+        description: Primary key.
+        data_tests: [unique, not_null]
+      - name: prescriber_code
+        description: Synthetic registration number.
+      - name: prescriber_name
+        description: Name (Faker-generated).
+      - name: prescriber_type_code
+        description: GP / NP / PH.
+      - name: prescriber_type_name
+        description: Profession.
+      - name: practice_code
+        description: Practice.
+      - name: start_date
+        description: Start date.
+
+  - name: dim_patient_band
+    description: >
+      Patient band dimension (age band x sex x deprivation decile). Privacy by design: the marts
+      expose bands, never individual patients.
+    columns:
+      - name: patient_band_key
+        description: Surrogate key of the band.
+        data_tests: [unique, not_null]
+      - name: age_band
+        description: Age band.
+      - name: age_band_order
+        description: Sort order for age_band.
+        data_tests: [not_null]
+      - name: age_group
+        description: Under 65 / 65 and over.
+      - name: sex
+        description: F / M / U.
+      - name: sex_label
+        description: Female / Male / Unknown.
+      - name: imd_decile
+        description: Deprivation decile (NULL = unknown).
+      - name: imd_decile_label
+        description: Decile as text, "Unknown" when NULL.
+
+  - name: dim_date
+    description: Contiguous calendar from 2022-01-01 to 2026-12-31 with NHS financial year (April-March) and season.
+    columns:
+      - name: date_day
+        description: Primary key.
+        data_tests: [unique, not_null]
+      - name: year
+        description: Calendar year.
+      - name: quarter
+        description: Calendar quarter.
+      - name: month
+        description: Month number.
+      - name: month_name
+        description: Month name.
+      - name: month_short
+        description: Short month name.
+      - name: year_month
+        description: YYYY-MM.
+      - name: month_start
+        description: First day of the month.
+      - name: week_start
+        description: Monday of the ISO week.
+      - name: iso_week
+        description: ISO week number.
+      - name: day_name
+        description: Day name.
+      - name: is_weekend
+        description: Saturday or Sunday.
+      - name: nhs_financial_year
+        description: NHS financial year, e.g. 2024/25 (April to March).
+      - name: nhs_financial_quarter
+        description: Quarter of the NHS financial year (Q1 = April-June).
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: [1, 2, 3, 4]
+                quote: false
+      - name: season
+        description: Winter (Dec-Feb), Spring, Summer, Autumn.
+
+  # ------------------------------------------------------------------ aggregates
+  - name: mart_icb_monthly_summary
+    description: >
+      One row per ICB per month. Items per 1,000 patients, cost per item, EPD-style generic
+      prescribing rate, antibacterial rate and potential generic savings. Rates use the
+      simulated patient panel (`registered_patients`) as the denominator.
+    columns:
+      - name: icb_month_key
+        description: Surrogate key (ICB + month).
+        data_tests: [unique, not_null]
+      - name: icb_code
+        description: ICB.
+      - name: icb_name
+        description: ICB name.
+      - name: region_name
+        description: Region.
+      - name: month_start
+        description: Month.
+      - name: practices
+        description: Practices in the ICB.
+      - name: list_size
+        description: Sum of full practice list sizes (context only).
+      - name: registered_patients
+        description: Simulated patient panel in the ICB (rate denominator).
+      - name: total_items
+        description: Items dispensed.
+      - name: total_net_ingredient_cost
+        description: Net ingredient cost (GBP).
+      - name: total_actual_cost
+        description: Actual cost (GBP).
+      - name: generic_items
+        description: Items dispensed as generics.
+      - name: antibacterial_items
+        description: Items from BNF section 5.1 (antibacterial drugs).
+      - name: potential_generic_saving
+        description: Saving if branded lines with a generic equivalent had been generic (GBP).
+      - name: items_per_1000_patients
+        description: total_items / registered_patients x 1,000.
+      - name: antibacterial_items_per_1000_patients
+        description: antibacterial_items / registered_patients x 1,000.
+      - name: cost_per_item
+        description: Net ingredient cost per item (GBP).
+      - name: generic_prescribing_rate
+        description: Generic items / items where a generic is available (EPD-style measure).
+        data_tests:
+          - dbt_expectations.expect_column_values_to_be_between:
+              arguments:
+                min_value: 0
+                max_value: 1
+      - name: generic_items_share
+        description: Generic items / all items.
+
+  - name: mart_pipeline_runs
+    description: EL run history for the pipeline-health page; one row per table per run.
+    columns:
+      - name: run_table_key
+        description: Surrogate key (run + table).
+        data_tests: [unique, not_null]
+      - name: run_id
+        description: EL run.
+      - name: table_name
+        description: Table loaded.
+      - name: load_mode
+        description: full / incremental.
+      - name: status
+        description: success / failed.
+      - name: is_full_refresh
+        description: Full refresh run.
+      - name: rows_loaded
+        description: Rows extracted for the table.
+      - name: watermark_before
+        description: Watermark before the run.
+      - name: watermark_after
+        description: Watermark after the run.
+      - name: started_at
+        description: Start (UTC).
+      - name: finished_at
+        description: End (UTC).
+      - name: duration_seconds
+        description: Duration.
+      - name: error_message
+        description: Error, if failed.
+      - name: run_date
+        description: Date of the run.
+      - name: run_succeeded
+        description: Every table in the run succeeded.
+      - name: run_rows_loaded
+        description: Rows loaded across the run.
+      - name: run_tables
+        description: Tables in the run.
+      - name: is_latest_run
+        description: Row belongs to the most recent run.
+
+  - name: mart_data_quality_checks
+    description: One row per data-quality check with affected rows and how the pipeline handles them.
+    data_tests:
+      - dbt_expectations.expect_table_row_count_to_equal:
+          arguments:
+            value: 12
+    columns:
+      - name: check_name
+        description: Check.
+        data_tests: [unique, not_null]
+      - name: entity
+        description: Prescription lines / Patients / Practices.
+      - name: affected_rows
+        description: Rows affected.
+      - name: total_rows
+        description: Rows checked.
+      - name: affected_share
+        description: affected_rows / total_rows.
+      - name: handling
+        description: How the pipeline handles the condition.
+      - name: checked_at
+        description: When the check ran.

@@ -5,7 +5,7 @@ faker==40.43.0
 numpy==2.5.4
 pandas==3.0.6
 pyodbc==5.3.0
-python-dotenv==1.2.4
+python-dotenv[cli]==1.2.4   # cli: `dotenv run -- dbt ...` loads .env for dbt
 
 # --- Phase 2: extract & load (SQL Server -> BigQuery) ---
 dlt[bigquery,sql_database,parquet]==1.31.0
@@ -13,7 +13,11 @@ sqlalchemy==2.1.4
 google-cloud-bigquery==3.46.2
 pyarrow==26.0.0
 pyyaml==6.0.3
-tenacity==9.2.1
+tenacity==9.1.2               # <9.2 required by google-genai (via dbt-bigquery)
+
+# --- Phase 3: transform (dbt Core + BigQuery adapter) ---
+dbt-core==1.12.6
+dbt-bigquery==1.12.1
 
 # --- tests ---
 pytest==9.1.1

@@ -1,0 +1,415 @@
+version: 2
+
+models:
+  - name: stg_rx__regions
+    description: NHS England regions. 1:1 with source `region`.
+    columns:
+      - name: region_code
+        description: NHS England region code (e.g. Y56 = London).
+        data_tests: [unique, not_null]
+      - name: region_ons_code
+        description: ONS geography code for the region (E400000xx).
+        data_tests: [unique, not_null]
+      - name: region_name
+        description: Region name.
+
+  - name: stg_rx__icbs
+    description: Integrated Care Boards. 1:1 with source `icb`.
+    data_tests:
+      - dbt_expectations.expect_table_row_count_to_equal:
+          arguments:
+            value: 42
+    columns:
+      - name: icb_code
+        description: ODS code of the ICB (e.g. QOP = Greater Manchester).
+        data_tests: [unique, not_null]
+      - name: icb_name
+        description: ICB name.
+      - name: region_code
+        description: Region the ICB belongs to.
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_rx__regions')
+                field: region_code
+
+  - name: stg_rx__practices
+    description: >
+      GP practices. Free-text defects in the source are normalised here: postcode upper-cased and
+      trimmed, rural/urban trimmed and title-cased (the original non-standard rows are flagged).
+    columns:
+      - name: practice_code
+        description: ODS-style practice code.
+        data_tests: [unique, not_null]
+      - name: practice_name
+        description: Practice name (synthetic).
+      - name: icb_code
+        description: Commissioning ICB.
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_rx__icbs')
+                field: icb_code
+      - name: postcode_district
+        description: Outward postcode (e.g. M14). NULL for a few practices in the source.
+      - name: postcode_area
+        description: Letters of the postcode district (e.g. M, BL).
+      - name: list_size
+        description: Full registered list size of the practice.
+        data_tests:
+          - dbt_expectations.expect_column_values_to_be_between:
+              arguments:
+                min_value: 1000
+                max_value: 50000
+      - name: rural_urban
+        description: Cleaned rural/urban classification.
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: ["Urban", "Rural"]
+      - name: is_rural_urban_nonstandard
+        description: True when the source value needed cleaning (casing/whitespace).
+      - name: practice_imd_decile
+        description: Index of Multiple Deprivation decile of the practice area (1 = most deprived).
+        data_tests:
+          - not_null
+          - dbt_expectations.expect_column_values_to_be_between:
+              arguments:
+                min_value: 1
+                max_value: 10
+      - name: opened_date
+        description: Date the practice opened.
+      - name: updated_at
+        description: Last change in the source.
+
+  - name: stg_rx__prescriber_types
+    description: Prescriber professions (GP, nurse, pharmacist).
+    columns:
+      - name: prescriber_type_code
+        description: GP / NP / PH.
+        data_tests:
+          - unique
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ["GP", "NP", "PH"]
+      - name: prescriber_type_name
+        description: Profession name.
+
+  - name: stg_rx__prescribers
+    description: Prescribers, each attached to one practice. Names are Faker-generated.
+    columns:
+      - name: prescriber_id
+        description: Surrogate key from the source.
+        data_tests: [unique, not_null]
+      - name: prescriber_code
+        description: Synthetic professional registration number.
+        data_tests: [unique, not_null]
+      - name: prescriber_type_code
+        description: Profession.
+        data_tests:
+          - relationships:
+              arguments:
+                to: ref('stg_rx__prescriber_types')
+                field: prescriber_type_code
+      - name: practice_code
+        description: Practice the prescriber works at.
+        data_tests:
+          - relationships:
+              arguments:
+                to: ref('stg_rx__practices')
+                field: practice_code
+      - name: prescriber_name
+        description: First and last name (synthetic).
+      - name: start_date
+        description: Date the prescriber started.
+      - name: updated_at
+        description: Last change in the source.
+
+  - name: stg_rx__bnf_chapters
+    description: BNF chapters (01 Gastro-intestinal ... 13 Skin).
+    columns:
+      - name: chapter_code
+        description: Two-digit BNF chapter code.
+        data_tests: [unique, not_null]
+      - name: chapter_name
+        description: Chapter name.
+
+  - name: stg_rx__bnf_sections
+    description: BNF sections (4-character code).
+    columns:
+      - name: section_code
+        description: Four-character BNF section code.
+        data_tests: [unique, not_null]
+      - name: section_name
+        description: Section name.
+      - name: chapter_code
+        description: Parent chapter.
+        data_tests:
+          - relationships:
+              arguments:
+                to: ref('stg_rx__bnf_chapters')
+                field: chapter_code
+
+  - name: stg_rx__bnf_paragraphs
+    description: BNF paragraphs (6-character code).
+    columns:
+      - name: paragraph_code
+        description: Six-character BNF paragraph code.
+        data_tests: [unique, not_null]
+      - name: paragraph_name
+        description: Paragraph name.
+      - name: section_code
+        description: Parent section.
+        data_tests:
+          - relationships:
+              arguments:
+                to: ref('stg_rx__bnf_sections')
+                field: section_code
+
+  - name: stg_rx__bnf_chemicals
+    description: BNF chemical substances (9-character code).
+    columns:
+      - name: chemical_code
+        description: Nine-character BNF chemical substance code.
+        data_tests: [unique, not_null]
+      - name: chemical_name
+        description: Chemical substance name (e.g. Atorvastatin).
+      - name: paragraph_code
+        description: Parent paragraph.
+        data_tests:
+          - relationships:
+              arguments:
+                to: ref('stg_rx__bnf_paragraphs')
+                field: paragraph_code
+
+  - name: stg_rx__medicines
+    description: BNF presentations (generic and branded) with their current unit cost.
+    columns:
+      - name: presentation_code
+        description: Fifteen-character BNF-style presentation code.
+        data_tests:
+          - unique
+          - not_null
+          - dbt_expectations.expect_column_values_to_match_regex:
+              arguments:
+                regex: "^[0-9]{7}[A-Z][A-Z0-9][A-Z]{6}$"
+      - name: presentation_name
+        description: e.g. "Atorvastatin 20mg tablets", "Lipitor 20mg tablets".
+      - name: chemical_code
+        description: Chemical substance of the presentation.
+        data_tests:
+          - relationships:
+              arguments:
+                to: ref('stg_rx__bnf_chemicals')
+                field: chemical_code
+      - name: is_generic
+        description: True for generic presentations.
+        data_tests: [not_null]
+      - name: brand_name
+        description: Brand for branded presentations; NULL for generics.
+      - name: generic_equivalent_code
+        description: For a branded presentation, its generic equivalent (NULL if brand-only).
+        data_tests:
+          - relationships:
+              arguments:
+                to: ref('stg_rx__medicines')
+                field: presentation_code
+      - name: form
+        description: Dosage form (tablet, capsule, inhaler...).
+      - name: strength
+        description: Strength as written on the pack.
+      - name: unit_of_measure
+        description: Unit that quantity and unit cost refer to.
+      - name: pack_quantity
+        description: Typical quantity per item.
+      - name: current_unit_cost
+        description: Current price per unit (GBP).
+        data_tests:
+          - dbt_expectations.expect_column_values_to_be_between:
+              arguments:
+                min_value: 0
+                strictly: true
+      - name: updated_at
+        description: Last change in the source (bumped by price changes).
+
+  - name: stg_rx__medicine_price_history
+    description: Price history with an inclusive date range per version; the open version ends 9999-12-31.
+    data_tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns: [presentation_code, effective_from]
+    columns:
+      - name: presentation_code
+        description: Medicine.
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_rx__medicines')
+                field: presentation_code
+      - name: effective_from
+        description: First day the price applies.
+        data_tests: [not_null]
+      - name: effective_to
+        description: Last day the price applies (9999-12-31 if current).
+      - name: is_current
+        description: True for the open version.
+      - name: unit_cost
+        description: Price per unit (GBP).
+      - name: change_reason
+        description: initial / price concession / concession ended / tariff reduction / annual uplift / tariff change.
+
+  - name: stg_rx__patients
+    description: Synthetic patients, banded only. Sex codes normalised to F / M / U.
+    columns:
+      - name: patient_id
+        description: Synthetic patient identifier. Never exposed in the marts.
+        data_tests: [unique, not_null]
+      - name: practice_code
+        description: Registered practice.
+        data_tests:
+          - relationships:
+              arguments:
+                to: ref('stg_rx__practices')
+                field: practice_code
+      - name: age_band
+        description: Age band.
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: ["0-4", "5-14", "15-24", "25-44", "45-64", "65-74", "75-84", "85+"]
+      - name: sex
+        description: F, M or U (unknown / non-standard source value).
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: ["F", "M", "U"]
+      - name: is_sex_code_nonstandard
+        description: True when the source value was not exactly F or M.
+      - name: imd_decile
+        description: Deprivation decile (1 = most deprived). NULL when unknown in the source.
+        data_tests:
+          - dbt_expectations.expect_column_values_to_be_between:
+              arguments:
+                min_value: 1
+                max_value: 10
+      - name: registered_date
+        description: Registration date with the practice.
+      - name: updated_at
+        description: Last change in the source.
+
+  - name: stg_rx__prescriptions
+    description: Prescription headers, deduplicated on prescription_id (latest version wins).
+    columns:
+      - name: prescription_id
+        description: Primary key.
+        data_tests: [unique, not_null]
+      - name: patient_id
+        description: Patient the prescription was issued to.
+        data_tests:
+          - relationships:
+              arguments:
+                to: ref('stg_rx__patients')
+                field: patient_id
+      - name: prescriber_id
+        description: Issuing prescriber.
+        data_tests:
+          - relationships:
+              arguments:
+                to: ref('stg_rx__prescribers')
+                field: prescriber_id
+      - name: practice_code
+        description: Issuing practice.
+      - name: issue_date
+        description: Date the prescription was issued.
+        data_tests: [not_null, not_in_future]
+      - name: created_at
+        description: When the header reached the source.
+      - name: updated_at
+        description: Incremental watermark column.
+
+  - name: stg_rx__prescription_items
+    description: >
+      Prescription lines, 1:1 with the source and deduplicated on item_line_id only. Business
+      rules (double submissions, imputation, credits) are applied in the intermediate layer.
+    columns:
+      - name: item_line_id
+        description: Primary key (identity, assigned in arrival order).
+        data_tests: [unique, not_null]
+      - name: prescription_id
+        description: Header the line belongs to.
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_rx__prescriptions')
+                field: prescription_id
+      - name: presentation_code
+        description: Dispensed medicine.
+        data_tests: [not_null]
+      - name: items
+        description: Number of times the line was dispensed (usually 1).
+        data_tests:
+          - dbt_expectations.expect_column_values_to_be_between:
+              arguments:
+                min_value: 1
+                max_value: 10
+      - name: quantity
+        description: Quantity in the medicine's unit of measure. NULL or negative (credits) in a few rows.
+      - name: net_ingredient_cost
+        description: Basic price before discounts (GBP). NULL in a few rows.
+      - name: actual_cost
+        description: Cost after discounts and fees (GBP). NULL in a few rows.
+      - name: dispensing_date
+        description: Date the line was dispensed.
+        data_tests:
+          - not_null
+          - dbt_expectations.expect_column_values_to_be_between:
+              arguments:
+                min_value: "cast('2023-01-01' as date)"
+                max_value: "cast('2025-12-31' as date)"
+      - name: created_at
+        description: When the line reached the source.
+      - name: updated_at
+        description: Incremental watermark column; moves on when a line is restated.
+        data_tests: [not_null, not_in_future]
+
+  - name: stg_rx__el_run_log
+    description: EL run log written by the dlt pipeline, one row per table per run.
+    data_tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns: [run_id, table_name]
+    columns:
+      - name: run_id
+        description: Identifier of the EL run.
+        data_tests: [not_null]
+      - name: table_name
+        description: Source table.
+      - name: load_mode
+        description: full or incremental.
+      - name: status
+        description: success or failed.
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: ["success", "failed"]
+      - name: is_full_refresh
+        description: True when the run dropped and reloaded the tables.
+      - name: rows_loaded
+        description: Rows extracted for the table in this run.
+      - name: watermark_before
+        description: updated_at high-watermark before the run (incremental tables).
+      - name: watermark_after
+        description: updated_at high-watermark after the run.
+      - name: started_at
+        description: Run start (UTC).
+      - name: finished_at
+        description: Run end (UTC).
+      - name: duration_seconds
+        description: Run duration.
+      - name: error_message
+        description: Error for failed runs.
