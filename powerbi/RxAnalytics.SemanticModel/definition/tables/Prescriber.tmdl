@@ -1,0 +1,63 @@
+/// Prescriber (synthetic names). Source: marts_rx.dim_prescriber.
+table Prescriber
+	lineageTag: abf1c8f7-79dc-45fa-88c9-cfaa523c8836
+
+	column 'Prescriber ID'
+		dataType: int64
+		isHidden
+		isKey
+		formatString: 0
+		lineageTag: 58e987ab-cbae-4f1c-bb08-6f5a49e1dce1
+		summarizeBy: none
+		sourceColumn: prescriber_id
+
+	column 'Prescriber Code'
+		dataType: string
+		lineageTag: 08b97c9c-c7bf-47e6-97a0-a1dfa14981df
+		summarizeBy: none
+		sourceColumn: prescriber_code
+
+	column Prescriber
+		dataType: string
+		lineageTag: 993d9693-8cd2-4e9c-a1f6-17d98b8b1546
+		summarizeBy: none
+		sourceColumn: prescriber_name
+
+	column 'Prescriber Type Code'
+		dataType: string
+		isHidden
+		lineageTag: 324bc04e-549c-4e5a-b906-0ac5d65d121e
+		summarizeBy: none
+		sourceColumn: prescriber_type_code
+
+	column 'Prescriber Type'
+		dataType: string
+		lineageTag: 5f8a91db-19cb-4514-a2b5-b55cb979f472
+		summarizeBy: none
+		sourceColumn: prescriber_type_name
+
+	column 'Practice Code'
+		dataType: string
+		isHidden
+		lineageTag: 7d4332e8-e472-4525-adb9-9320b3668f38
+		summarizeBy: none
+		sourceColumn: practice_code
+
+	column 'Start Date'
+		dataType: dateTime
+		isHidden
+		formatString: d mmm yyyy
+		lineageTag: 3e360c2d-ee86-47fd-8be8-4ea3f64da5f1
+		summarizeBy: none
+		sourceColumn: start_date
+
+	partition Prescriber = m
+		mode: import
+		source =
+				let
+				    Source = GoogleBigQuery.Database([BillingProject = #"GCP Project"]),
+				    Dataset = Source{[Name = #"GCP Project"]}[Data]{[Name = "marts_rx", Kind = "Schema"]}[Data],
+				    Data = Dataset{[Name = "dim_prescriber", Kind = "Table"]}[Data]
+				in
+				    Data
+

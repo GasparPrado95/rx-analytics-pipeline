@@ -1,0 +1,133 @@
+/// EL run history: one row per table per run, written by the dlt pipeline. Source: marts_rx.mart_pipeline_runs.
+table 'Pipeline Runs'
+	lineageTag: 48694293-6a0a-4bca-8220-6a5df83420d5
+
+	column 'Run Table Key'
+		dataType: string
+		isHidden
+		isKey
+		lineageTag: ea78e683-b62a-4141-9a94-c2e373a2dd22
+		summarizeBy: none
+		sourceColumn: run_table_key
+
+	column 'Run ID'
+		dataType: string
+		lineageTag: 70a08412-814a-44f7-892f-6a09ac56e89e
+		summarizeBy: none
+		sourceColumn: run_id
+
+	column Table
+		dataType: string
+		lineageTag: 89b874e2-ff56-4262-92d8-5a6ca977d614
+		summarizeBy: none
+		sourceColumn: table_name
+
+	column 'Load Mode'
+		dataType: string
+		lineageTag: c83f3fb1-7c6e-413d-9b05-60dba0be5c17
+		summarizeBy: none
+		sourceColumn: load_mode
+
+	column Status
+		dataType: string
+		lineageTag: 24f7cfa5-4243-4a9d-90e2-5c40132c3f40
+		summarizeBy: none
+		sourceColumn: status
+
+	column 'Full Refresh'
+		dataType: boolean
+		lineageTag: 66999f22-0180-4752-94c7-4dfed205e08a
+		summarizeBy: none
+		sourceColumn: is_full_refresh
+
+	column 'Rows Loaded'
+		dataType: int64
+		formatString: #,0
+		lineageTag: 536ef488-c9c8-4f79-a116-f71bd60193b3
+		summarizeBy: sum
+		sourceColumn: rows_loaded
+
+	column 'Watermark Before'
+		dataType: dateTime
+		formatString: d mmm yyyy hh:nn
+		lineageTag: 943f2349-adfb-45f0-920b-cacd958be934
+		summarizeBy: none
+		sourceColumn: watermark_before
+
+	column 'Watermark After'
+		dataType: dateTime
+		formatString: d mmm yyyy hh:nn
+		lineageTag: 3424dfe6-177a-49f7-951a-7caa8e27f5b3
+		summarizeBy: none
+		sourceColumn: watermark_after
+
+	column 'Started At'
+		dataType: dateTime
+		formatString: d mmm yyyy hh:nn
+		lineageTag: e82f7b1c-8170-4128-a936-a522691c71ee
+		summarizeBy: none
+		sourceColumn: started_at
+
+	column 'Finished At'
+		dataType: dateTime
+		formatString: d mmm yyyy hh:nn
+		lineageTag: c8b61e5c-2418-4728-8f64-6820cb57189e
+		summarizeBy: none
+		sourceColumn: finished_at
+
+	column 'Duration (s)'
+		dataType: int64
+		formatString: #,0
+		lineageTag: ce2c37e4-d3f8-4567-aaf7-387390f102e6
+		summarizeBy: none
+		sourceColumn: duration_seconds
+
+	column Error
+		dataType: string
+		lineageTag: 4452075a-a085-4b6c-9e9e-b355aec2ae10
+		summarizeBy: none
+		sourceColumn: error_message
+
+	column 'Run Date'
+		dataType: dateTime
+		formatString: d mmm yyyy
+		lineageTag: 93cf0368-4345-45d5-af7a-c03039c12c25
+		summarizeBy: none
+		sourceColumn: run_date
+
+	column 'Run Succeeded'
+		dataType: boolean
+		lineageTag: 80b16a07-b7e5-408c-a7dc-18c0699babc5
+		summarizeBy: none
+		sourceColumn: run_succeeded
+
+	column 'Run Rows Loaded'
+		dataType: int64
+		formatString: #,0
+		lineageTag: f0ab972f-4c47-4845-84f5-f62f076241b8
+		summarizeBy: none
+		sourceColumn: run_rows_loaded
+
+	column 'Run Tables'
+		dataType: int64
+		formatString: 0
+		lineageTag: 4f43a17d-f898-4db4-8d08-a5f5c2488de4
+		summarizeBy: none
+		sourceColumn: run_tables
+
+	column 'Is Latest Run'
+		dataType: boolean
+		lineageTag: 0683c85e-3b2d-469e-a2bb-dc643366a683
+		summarizeBy: none
+		sourceColumn: is_latest_run
+
+	partition 'Pipeline Runs' = m
+		mode: import
+		source =
+				let
+				    Source = GoogleBigQuery.Database([BillingProject = #"GCP Project"]),
+				    Dataset = Source{[Name = #"GCP Project"]}[Data]{[Name = "marts_rx", Kind = "Schema"]}[Data],
+				    Data = Dataset{[Name = "mart_pipeline_runs", Kind = "Table"]}[Data]
+				in
+				    Data
+

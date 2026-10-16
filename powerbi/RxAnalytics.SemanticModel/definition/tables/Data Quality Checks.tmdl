@@ -1,0 +1,60 @@
+/// One row per data-quality check, with rows affected and how the pipeline handles them. Source: marts_rx.mart_data_quality_checks.
+table 'Data Quality Checks'
+	lineageTag: 5cc97204-0e53-45ea-abed-d74b78c1b5b9
+
+	column Check
+		dataType: string
+		lineageTag: 20dbf93b-f106-4a29-bb3d-4755cedac0c2
+		summarizeBy: none
+		sourceColumn: check_name
+
+	column Entity
+		dataType: string
+		lineageTag: 5763a858-1655-4ee9-95dd-4150a993c307
+		summarizeBy: none
+		sourceColumn: entity
+
+	column 'Affected Rows'
+		dataType: int64
+		formatString: #,0
+		lineageTag: 5a0be7b8-0f2f-495f-9743-a2d621fa288f
+		summarizeBy: sum
+		sourceColumn: affected_rows
+
+	column 'Total Rows'
+		dataType: int64
+		formatString: #,0
+		lineageTag: a5b72d6f-f413-4fec-95a6-c8307970fc9a
+		summarizeBy: none
+		sourceColumn: total_rows
+
+	column 'Affected Share'
+		dataType: double
+		formatString: 0.00%
+		lineageTag: fed8c7fc-8477-4dd2-9f9e-2458d3b96038
+		summarizeBy: none
+		sourceColumn: affected_share
+
+	column Handling
+		dataType: string
+		lineageTag: 4df2e90d-103a-44c0-9ca5-1ae8ea8046f3
+		summarizeBy: none
+		sourceColumn: handling
+
+	column 'Checked At'
+		dataType: dateTime
+		formatString: d mmm yyyy hh:nn
+		lineageTag: 5e053f37-72da-4157-a3fa-549fe654a9ed
+		summarizeBy: none
+		sourceColumn: checked_at
+
+	partition 'Data Quality Checks' = m
+		mode: import
+		source =
+				let
+				    Source = GoogleBigQuery.Database([BillingProject = #"GCP Project"]),
+				    Dataset = Source{[Name = #"GCP Project"]}[Data]{[Name = "marts_rx", Kind = "Schema"]}[Data],
+				    Data = Dataset{[Name = "mart_data_quality_checks", Kind = "Table"]}[Data]
+				in
+				    Data
+

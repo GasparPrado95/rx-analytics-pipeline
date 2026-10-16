@@ -1,0 +1,145 @@
+/// GP practice with its ICB and NHS region. Source: marts_rx.dim_practice.
+table Practice
+	lineageTag: 34465208-1164-4dc6-a032-41e78c91ebca
+
+	column 'Practice Code'
+		dataType: string
+		isKey
+		displayFolder: Codes
+		lineageTag: 21cb702a-db25-426a-abd9-18172854fa14
+		summarizeBy: none
+		sourceColumn: practice_code
+
+	column Practice
+		dataType: string
+		lineageTag: e6fa3ccb-3723-4ef5-b16b-7a95c587053d
+		summarizeBy: none
+		sourceColumn: practice_name
+
+	column 'Postcode District'
+		dataType: string
+		lineageTag: c88ee07d-37b7-43fe-a817-a9e7ce68df1e
+		dataCategory: PostalCode
+		summarizeBy: none
+		sourceColumn: postcode_district
+
+	column 'Postcode Area'
+		dataType: string
+		lineageTag: 1aaa67c1-32ff-40de-849b-1bef29507310
+		summarizeBy: none
+		sourceColumn: postcode_area
+
+	column Country
+		dataType: string
+		isHidden
+		lineageTag: 6c74685c-6e8b-4842-a0d9-677b7ad39818
+		dataCategory: Country
+		summarizeBy: none
+		sourceColumn: country
+
+	/// Full registered list size (context only).
+	column 'List Size'
+		dataType: int64
+		formatString: #,0
+		lineageTag: 37d51729-0bf6-49d9-a673-8145769baa8f
+		summarizeBy: none
+		sourceColumn: list_size
+
+	/// Simulated patient panel: the denominator for per-1,000-patient rates.
+	column 'Registered Patients'
+		dataType: int64
+		isHidden
+		formatString: #,0
+		lineageTag: 50c77d0c-8c70-4484-8aab-0a005cd7c320
+		summarizeBy: none
+		sourceColumn: registered_patients
+
+	column 'Rural or Urban'
+		dataType: string
+		lineageTag: 86f0f27f-4525-4dd7-996d-3e5a1e1f6dfe
+		summarizeBy: none
+		sourceColumn: rural_urban
+
+	/// IMD decile of the practice area (1 = most deprived).
+	column 'Deprivation Decile'
+		dataType: int64
+		formatString: 0
+		lineageTag: 4c7deae8-9cc3-4dbd-9a65-2b11fcd7287a
+		summarizeBy: none
+		sourceColumn: practice_imd_decile
+
+	column 'Deprivation Quintile'
+		dataType: string
+		lineageTag: beb2d4fc-1465-49af-931a-84555c32c5db
+		summarizeBy: none
+		sourceColumn: practice_imd_quintile
+
+	column 'Opened Date'
+		dataType: dateTime
+		isHidden
+		formatString: d mmm yyyy
+		lineageTag: cc5083e0-3681-4c5d-81a3-0f1808f6ef69
+		summarizeBy: none
+		sourceColumn: opened_date
+
+	column 'ICB Code'
+		dataType: string
+		displayFolder: Codes
+		lineageTag: 0ea1591b-c777-4273-889a-cc34899b269d
+		summarizeBy: none
+		sourceColumn: icb_code
+
+	/// Integrated Care Board.
+	column ICB
+		dataType: string
+		lineageTag: cd10e50d-3a46-4a9f-9ff5-cdb9a7de40d2
+		summarizeBy: none
+		sourceColumn: icb_name
+
+	column 'Region Code'
+		dataType: string
+		displayFolder: Codes
+		lineageTag: 64fd25c7-a40f-4679-b676-f5e68e3818b8
+		summarizeBy: none
+		sourceColumn: region_code
+
+	column 'Region ONS Code'
+		dataType: string
+		displayFolder: Codes
+		lineageTag: abafcac5-8c14-4ade-b956-c6fbb0fec21c
+		summarizeBy: none
+		sourceColumn: region_ons_code
+
+	/// NHS England region.
+	column Region
+		dataType: string
+		lineageTag: 23c2983f-bf14-41aa-a455-333088c75ede
+		summarizeBy: none
+		sourceColumn: region_name
+
+	/// NHS region > ICB > practice.
+	hierarchy Organisation
+		lineageTag: 06494dea-9ffb-4638-b710-3cd42d081493
+
+		level Region
+			lineageTag: 0ca86f6c-2516-4352-864b-0b337edd16e4
+			column: Region
+
+		level ICB
+			lineageTag: 00a67529-2d72-4317-9634-2875453d3a52
+			column: ICB
+
+		level Practice
+			lineageTag: fffe4c7f-0439-4e5f-b589-2bf38d611ded
+			column: Practice
+
+	partition Practice = m
+		mode: import
+		source =
+				let
+				    Source = GoogleBigQuery.Database([BillingProject = #"GCP Project"]),
+				    Dataset = Source{[Name = #"GCP Project"]}[Data]{[Name = "marts_rx", Kind = "Schema"]}[Data],
+				    Data = Dataset{[Name = "dim_practice", Kind = "Table"]}[Data]
+				in
+				    Data
+

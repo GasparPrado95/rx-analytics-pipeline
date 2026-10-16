@@ -1,0 +1,20 @@
+relationship 'Prescriptions_Dispensing Date_Date_Date'
+	fromColumn: Prescriptions.'Dispensing Date'
+	toColumn: Date.Date
+
+relationship 'Prescriptions_Presentation Code_Medicine_Presentation Code'
+	fromColumn: Prescriptions.'Presentation Code'
+	toColumn: Medicine.'Presentation Code'
+
+relationship 'Prescriptions_Practice Code_Practice_Practice Code'
+	fromColumn: Prescriptions.'Practice Code'
+	toColumn: Practice.'Practice Code'
+
+relationship 'Prescriptions_Prescriber ID_Prescriber_Prescriber ID'
+	fromColumn: Prescriptions.'Prescriber ID'
+	toColumn: Prescriber.'Prescriber ID'
+
+relationship 'Prescriptions_Patient Band Key_Patient Band_Patient Band Key'
+	fromColumn: Prescriptions.'Patient Band Key'
+	toColumn: 'Patient Band'.'Patient Band Key'
+

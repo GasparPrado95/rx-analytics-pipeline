@@ -1,0 +1,24 @@
+/// Synthetic NHS England primary-care prescribing. Star schema imported from BigQuery dataset marts_rx (built by dbt). All data is synthetic.
+model RxAnalytics
+	culture: en-US
+	defaultPowerBIDataSourceVersion: powerBI_V3
+	discourageImplicitMeasures
+	sourceQueryCulture: en-US
+	dataAccessOptions
+		legacyRedirects
+		returnErrorValuesAsNull
+
+annotation PBI_ProTooling = ["MCP-PBIModeling"]
+
+annotation __PBI_TimeIntelligenceEnabled = 0
+
+ref table Prescriptions
+ref table Medicine
+ref table Practice
+ref table Prescriber
+ref table 'Patient Band'
+ref table Date
+ref table 'Data Quality Checks'
+ref table 'Pipeline Runs'
+ref table _Measures
+

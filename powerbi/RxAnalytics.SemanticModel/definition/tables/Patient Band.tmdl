@@ -1,0 +1,70 @@
+/// Patient band (age band x sex x deprivation decile). The model never holds individual patients. Source: marts_rx.dim_patient_band.
+table 'Patient Band'
+	lineageTag: 643cc306-8a38-4cd0-bc37-870fc3a434fe
+
+	column 'Patient Band Key'
+		dataType: string
+		isHidden
+		isKey
+		lineageTag: c5a09f77-0caa-4fb5-a81d-a0b8d533b3cc
+		summarizeBy: none
+		sourceColumn: patient_band_key
+
+	column 'Age Band Order'
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 85b09253-d2df-4f65-9756-cd795e0bf458
+		summarizeBy: none
+		sourceColumn: age_band_order
+
+	column 'Age Band'
+		dataType: string
+		lineageTag: deb81bb5-d93d-4918-ae32-529dfe7a3dc6
+		summarizeBy: none
+		sourceColumn: age_band
+		sortByColumn: 'Age Band Order'
+
+	column 'Age Group'
+		dataType: string
+		lineageTag: 77b5cef4-7cd9-424a-b234-75e4afab7fc2
+		summarizeBy: none
+		sourceColumn: age_group
+
+	column 'Sex Code'
+		dataType: string
+		isHidden
+		lineageTag: 9602c819-f380-417a-af25-6d460de02b59
+		summarizeBy: none
+		sourceColumn: sex
+
+	column Sex
+		dataType: string
+		lineageTag: 496df708-1bef-4e47-afee-80db8403be17
+		summarizeBy: none
+		sourceColumn: sex_label
+
+	column 'Patient Deprivation Decile Number'
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: e81b08c0-35a7-44fc-871b-9d4c616b5e41
+		summarizeBy: none
+		sourceColumn: imd_decile
+
+	column 'Patient Deprivation Decile'
+		dataType: string
+		lineageTag: fa1d9330-95f6-4fd1-a3d2-ddca6e316a01
+		summarizeBy: none
+		sourceColumn: imd_decile_label
+
+	partition 'Patient Band' = m
+		mode: import
+		source =
+				let
+				    Source = GoogleBigQuery.Database([BillingProject = #"GCP Project"]),
+				    Dataset = Source{[Name = #"GCP Project"]}[Data]{[Name = "marts_rx", Kind = "Schema"]}[Data],
+				    Data = Dataset{[Name = "dim_patient_band", Kind = "Table"]}[Data]
+				in
+				    Data
+

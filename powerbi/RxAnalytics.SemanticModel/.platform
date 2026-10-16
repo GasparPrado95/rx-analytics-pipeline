@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "SemanticModel",
+    "displayName": "RxAnalytics"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "4f3d2a8e-6b1c-4e7a-9d55-0c2b7a9e1f10"
+  }
+}

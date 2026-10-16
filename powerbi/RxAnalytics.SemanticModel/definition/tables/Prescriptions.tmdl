@@ -1,0 +1,176 @@
+/// Fact: one dispensed prescription line (double submissions removed). Source: marts_rx.fct_prescription_items.
+table Prescriptions
+	lineageTag: e6d47e48-fb83-4f22-9cea-a5854f5018a2
+
+	column 'Dispensing Date'
+		dataType: dateTime
+		isHidden
+		formatString: d mmm yyyy
+		lineageTag: 9553a5ef-06ff-40a9-811c-ffdcd93b9b60
+		summarizeBy: none
+		sourceColumn: dispensing_date
+
+	column 'Presentation Code'
+		dataType: string
+		isHidden
+		lineageTag: cc5080e1-0bcf-451a-8a26-63a8cdf30f48
+		summarizeBy: none
+		sourceColumn: presentation_code
+
+	column 'Practice Code'
+		dataType: string
+		isHidden
+		lineageTag: 9e742862-65ff-4fe9-964b-6accbd8bb1a4
+		summarizeBy: none
+		sourceColumn: practice_code
+
+	column 'Prescriber ID'
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 6d8e49a4-0f43-4fb9-a7a8-7bcc2b7db327
+		summarizeBy: none
+		sourceColumn: prescriber_id
+
+	column 'Patient Band Key'
+		dataType: string
+		isHidden
+		lineageTag: f33a80aa-8b77-4efc-bbce-3490411abd52
+		summarizeBy: none
+		sourceColumn: patient_band_key
+
+	/// Items dispensed; negative for credit lines.
+	column Items
+		dataType: int64
+		isHidden
+		formatString: #,0
+		lineageTag: fd3f3317-5020-4255-a478-3051bb46482d
+		summarizeBy: sum
+		sourceColumn: items
+
+	column Quantity
+		dataType: decimal
+		isHidden
+		formatString: #,0
+		lineageTag: ac214898-d1e7-4a7c-b68c-e236f5345095
+		summarizeBy: sum
+		sourceColumn: quantity
+
+	column 'Net Ingredient Cost'
+		dataType: decimal
+		isHidden
+		formatString: £#,0.00
+		lineageTag: 178d082f-c51e-47fd-97c4-ae3deea14bf3
+		summarizeBy: sum
+		sourceColumn: net_ingredient_cost
+
+	column 'Actual Cost'
+		dataType: decimal
+		isHidden
+		formatString: £#,0.00
+		lineageTag: 221b7be4-455f-4e77-8406-c63f99c8801d
+		summarizeBy: sum
+		sourceColumn: actual_cost
+
+	column 'Potential Generic Saving'
+		dataType: decimal
+		isHidden
+		formatString: £#,0.00
+		lineageTag: 138f6a86-ea97-4dfb-90d8-11835833a25f
+		summarizeBy: sum
+		sourceColumn: potential_generic_saving
+
+	column 'Arrival Lag Days'
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 179aac99-53d4-40b6-87a3-72f6f0b61c5c
+		summarizeBy: none
+		sourceColumn: arrival_lag_days
+
+	/// Line dispensed as a generic presentation.
+	column 'Is Generic'
+		dataType: boolean
+		displayFolder: Flags
+		lineageTag: b35b6740-1756-4957-b341-c2c492cc51fe
+		summarizeBy: none
+		sourceColumn: is_generic
+
+	/// A generic exists for the dispensed presentation.
+	column 'Generic Available'
+		dataType: boolean
+		displayFolder: Flags
+		lineageTag: 2721c518-a2a5-4d6f-a596-14686b9918ea
+		summarizeBy: none
+		sourceColumn: generic_available
+
+	/// Credit line reversing an earlier line (negative items and cost).
+	column 'Is Credit'
+		dataType: boolean
+		displayFolder: Flags
+		lineageTag: bb49bd2a-081b-4177-b7c6-56062b9a1a5e
+		summarizeBy: none
+		sourceColumn: is_credit
+
+	/// Reached the source more than 30 days after dispensing.
+	column 'Is Late Arrival'
+		dataType: boolean
+		displayFolder: Flags
+		lineageTag: c9f78e8c-f8c1-4ea1-8893-33e44d10e340
+		summarizeBy: none
+		sourceColumn: is_late_arrival
+
+	/// Corrected in the source after it first arrived.
+	column 'Is Restated'
+		dataType: boolean
+		displayFolder: Flags
+		lineageTag: a36b8d3a-c4a8-47c0-b33c-f98139ed4c0d
+		summarizeBy: none
+		sourceColumn: is_restated
+
+	/// Net ingredient cost was missing and imputed by dbt.
+	column 'Is NIC Imputed'
+		dataType: boolean
+		displayFolder: Flags
+		lineageTag: 5187040e-dbe3-4053-a86b-95d95305cc33
+		summarizeBy: none
+		sourceColumn: is_nic_imputed
+
+	/// Actual cost was missing and imputed by dbt.
+	column 'Is Actual Cost Imputed'
+		dataType: boolean
+		displayFolder: Flags
+		lineageTag: 0bd17df4-7dad-42c1-a260-77ff0d2fd993
+		summarizeBy: none
+		sourceColumn: is_actual_cost_imputed
+
+	column 'Arrival Lag Band Order' =
+			VAR lag = Prescriptions[Arrival Lag Days]
+			RETURN SWITCH(TRUE(), lag <= 7, 1, lag <= 14, 2, lag <= 30, 3, lag <= 90, 4, 5)
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 35711e31-a72c-4951-af92-8fc3f3c392de
+		summarizeBy: none
+
+	/// Days between dispensing and the line reaching the source system, banded. Over 30 days counts as a late arrival.
+	column 'Arrival Lag Band' =
+			VAR lag = Prescriptions[Arrival Lag Days]
+			RETURN SWITCH(TRUE(), lag <= 7, "0-7 days", lag <= 14, "8-14 days", lag <= 30, "15-30 days", lag <= 90, "31-90 days (late)", "Over 90 days (late)")
+		dataType: string
+		displayFolder: Flags
+		lineageTag: 147b45d5-efd1-4f42-8713-a864d7026c20
+		summarizeBy: none
+		sortByColumn: 'Arrival Lag Band Order'
+
+	partition Prescriptions = m
+		mode: import
+		source =
+				let
+				    Source = GoogleBigQuery.Database([BillingProject = #"GCP Project"]),
+				    Dataset = Source{[Name = #"GCP Project"]}[Data]{[Name = "marts_rx", Kind = "Schema"]}[Data],
+				    Data = Dataset{[Name = "fct_prescription_items", Kind = "Table"]}[Data],
+				    Selected = Table.SelectColumns(Data, {"dispensing_date", "presentation_code", "practice_code", "prescriber_id", "patient_band_key", "items", "quantity", "net_ingredient_cost", "actual_cost", "potential_generic_saving", "arrival_lag_days", "is_generic", "generic_available", "is_credit", "is_late_arrival", "is_restated", "is_nic_imputed", "is_actual_cost_imputed"})
+				in
+				    Selected
+

@@ -1,0 +1,316 @@
+/// Home of all report measures (display folders by topic).
+table _Measures
+	lineageTag: bf0bc437-90b0-4ed0-a88e-6019e37ca923
+
+	/// Items dispensed (credit lines count negative).
+	measure 'Total Items' = SUM ( Prescriptions[Items] )
+		displayFolder: Volume
+		lineageTag: 8762e6f0-a94c-4ab7-831e-76787d54e0cc
+
+		formatStringDefinition =
+				VAR v = SELECTEDMEASURE ()
+				RETURN SWITCH ( TRUE (), ABS ( v ) >= 1000000, "#,0.00,,""M""", ABS ( v ) >= 10000, "#,0.0,""K""", "#,0" )
+
+	/// Dispensed prescription lines after removing double submissions.
+	measure 'Prescription Lines' = COUNTROWS ( Prescriptions )
+		formatString: #,0
+		displayFolder: Volume
+		lineageTag: 49cbf7ba-9adb-4264-8faf-a690b8b8ec05
+
+	/// Quantity in each medicine's unit of measure (tablets, ml, ...); only meaningful within one presentation.
+	measure 'Total Quantity' = SUM ( Prescriptions[Quantity] )
+		formatString: #,0
+		displayFolder: Volume
+		lineageTag: 5dc87680-ec17-44b4-a2d9-5e2696fee3c9
+
+	/// Net ingredient cost (GBP): basic price before discounts.
+	measure 'Total Cost' = SUM ( Prescriptions[Net Ingredient Cost] )
+		displayFolder: Cost
+		lineageTag: f040b5c3-84dd-44f3-93b4-3b3912d18983
+
+		formatStringDefinition =
+				VAR v = SELECTEDMEASURE ()
+				RETURN SWITCH ( TRUE (), ABS ( v ) >= 1000000, "£#,0.0,,""M""", ABS ( v ) >= 10000, "£#,0.0,""K""", "£#,0" )
+
+	/// Actual cost (GBP) after discounts and fees.
+	measure 'Actual Cost' = SUM ( Prescriptions[Actual Cost] )
+		displayFolder: Cost
+		lineageTag: 71c66de2-418f-41e6-88fd-b0fc30769d1a
+
+		formatStringDefinition =
+				VAR v = SELECTEDMEASURE ()
+				RETURN SWITCH ( TRUE (), ABS ( v ) >= 1000000, "£#,0.0,,""M""", ABS ( v ) >= 10000, "£#,0.0,""K""", "£#,0" )
+
+	/// Net ingredient cost per item dispensed.
+	measure 'Cost per Item' = DIVIDE ( [Total Cost], [Total Items] )
+		formatString: £#,0.00
+		displayFolder: Cost
+		lineageTag: 978798b0-0299-4f41-ab08-2c76b2749b7c
+
+	/// Patients in the simulated panel of the practices in context. Denominator for per-1,000 rates.
+	measure 'Registered Patients' = SUM ( Practice[Registered Patients] )
+		formatString: #,0
+		displayFolder: Rates
+		lineageTag: 7d97917e-c24d-4cf9-8935-d243d7681afa
+
+	/// Number of calendar months selected (the Date table covers only 2023-2025).
+	measure 'Months in Period' = DISTINCTCOUNT ( 'Date'[Year Month] )
+		formatString: 0
+		isHidden
+		displayFolder: Rates
+		lineageTag: 8e279789-a26b-4e3c-86e5-0242ee2a68b2
+
+	/// Average items per month per 1,000 registered patients.
+	measure 'Items per 1,000 Patients' = DIVIDE ( [Total Items], [Registered Patients] * [Months in Period] ) * 1000
+		formatString: #,0
+		displayFolder: Rates
+		lineageTag: 56d5a76f-ee02-41c3-a773-3f7b58299b01
+
+	/// Average net ingredient cost per month per 1,000 registered patients.
+	measure 'Cost per 1,000 Patients' = DIVIDE ( [Total Cost], [Registered Patients] * [Months in Period] ) * 1000
+		formatString: £#,0
+		displayFolder: Rates
+		lineageTag: 74b78158-b566-425a-8686-15e8f66e4d65
+
+	/// Average monthly items from BNF section 5.1 (antibacterial drugs) per 1,000 registered patients.
+	measure 'Antibacterial Items per 1,000 Patients' =
+			VAR abx = CALCULATE ( [Total Items], KEEPFILTERS ( Medicine[BNF Section Code] = "0501" ) )
+			RETURN DIVIDE ( abx, [Registered Patients] * [Months in Period] ) * 1000
+		formatString: #,0.0
+		displayFolder: Rates
+		lineageTag: f58d072d-a102-4b32-a7a4-4e1870cb6791
+
+	/// Items dispensed as generics.
+	measure 'Generic Items' = CALCULATE ( [Total Items], KEEPFILTERS ( Prescriptions[Is Generic] = TRUE () ) )
+		formatString: #,0
+		displayFolder: Generic & Savings
+		lineageTag: c4feed03-3056-46a2-8143-d181668667af
+
+	/// Items for presentations that have a generic on the market.
+	measure 'Items Where Generic Available' = CALCULATE ( [Total Items], KEEPFILTERS ( Prescriptions[Generic Available] = TRUE () ) )
+		formatString: #,0
+		displayFolder: Generic & Savings
+		lineageTag: 14a41f12-0881-4057-aaae-373194495ba4
+
+	/// Generic items among presentations where a generic exists.
+	measure 'Generic Items Where Available' = CALCULATE ( [Total Items], KEEPFILTERS ( Prescriptions[Generic Available] = TRUE () ), KEEPFILTERS ( Prescriptions[Is Generic] = TRUE () ) )
+		formatString: #,0
+		displayFolder: Generic & Savings
+		lineageTag: 2df5f8bf-07e1-4ec6-8f27-da0cfa89f6ce
+
+	/// Branded items that could have been dispensed as a generic.
+	measure 'Branded Items Where Generic Available' = [Items Where Generic Available] - [Generic Items Where Available]
+		formatString: #,0
+		displayFolder: Generic & Savings
+		lineageTag: dab7019e-78c1-4e6c-bd06-b36d4825e70a
+
+	/// Generic prescribing rate (EPD style): generic items as a share of items where a generic is available.
+	measure 'Generic %' = DIVIDE ( [Generic Items Where Available], [Items Where Generic Available] )
+		formatString: 0.0%
+		displayFolder: Generic & Savings
+		lineageTag: d5a8cd14-3e22-4b28-8c8f-01235b2c0d8f
+
+	/// Cost of branded items that have a generic equivalent.
+	measure 'Branded Cost Where Generic Available' = CALCULATE ( [Total Cost], KEEPFILTERS ( Prescriptions[Generic Available] = TRUE () ), KEEPFILTERS ( Prescriptions[Is Generic] = FALSE () ) )
+		displayFolder: Generic & Savings
+		lineageTag: 387e2995-367f-4b83-a743-c8cec9d3340e
+
+		formatStringDefinition =
+				VAR v = SELECTEDMEASURE ()
+				RETURN SWITCH ( TRUE (), ABS ( v ) >= 1000000, "£#,0.0,,""M""", ABS ( v ) >= 10000, "£#,0.0,""K""", "£#,0" )
+
+	/// Saving had branded lines with a generic equivalent been dispensed as the generic, at prices on the dispensing date.
+	measure 'Potential Generic Saving' = SUM ( Prescriptions[Potential Generic Saving] )
+		displayFolder: Generic & Savings
+		lineageTag: 61429e84-b8aa-43c2-969a-67b824d0d0b2
+
+		formatStringDefinition =
+				VAR v = SELECTEDMEASURE ()
+				RETURN SWITCH ( TRUE (), ABS ( v ) >= 1000000, "£#,0.0,,""M""", ABS ( v ) >= 10000, "£#,0.0,""K""", "£#,0" )
+
+	/// Share of avoidable branded spend.
+	measure 'Saving % of Branded Cost' = DIVIDE ( [Potential Generic Saving], [Branded Cost Where Generic Available] )
+		formatString: 0.0%
+		displayFolder: Generic & Savings
+		lineageTag: 433d22cc-7bc7-48be-9433-64b1a7d10950
+
+	/// Items in the same period of the previous year.
+	measure 'Total Items PY' = CALCULATE ( [Total Items], SAMEPERIODLASTYEAR ( 'Date'[Date] ) )
+		displayFolder: Time Intelligence
+		lineageTag: e96c1ad1-a30b-4167-a6b0-6d4d987bdc2a
+
+		formatStringDefinition =
+				VAR v = SELECTEDMEASURE ()
+				RETURN SWITCH ( TRUE (), ABS ( v ) >= 1000000, "#,0.00,,""M""", ABS ( v ) >= 10000, "#,0.0,""K""", "#,0" )
+
+	/// Change in items versus the same period last year.
+	measure 'Items YoY %' =
+			VAR prior = [Total Items PY]
+			RETURN IF ( NOT ISBLANK ( prior ) && prior <> 0, DIVIDE ( [Total Items] - prior, prior ) )
+		formatString: +0.0%;-0.0%;0.0%
+		displayFolder: Time Intelligence
+		lineageTag: 47dbfbfd-f5eb-4d0e-be38-6a338f18eec2
+
+	/// Net ingredient cost in the same period of the previous year.
+	measure 'Total Cost PY' = CALCULATE ( [Total Cost], SAMEPERIODLASTYEAR ( 'Date'[Date] ) )
+		displayFolder: Time Intelligence
+		lineageTag: 6d908941-5476-4a87-a38a-0327bf7bd5a9
+
+		formatStringDefinition =
+				VAR v = SELECTEDMEASURE ()
+				RETURN SWITCH ( TRUE (), ABS ( v ) >= 1000000, "£#,0.0,,""M""", ABS ( v ) >= 10000, "£#,0.0,""K""", "£#,0" )
+
+	/// Change in net ingredient cost versus the same period last year.
+	measure 'Cost YoY %' =
+			VAR prior = [Total Cost PY]
+			RETURN IF ( NOT ISBLANK ( prior ) && prior <> 0, DIVIDE ( [Total Cost] - prior, prior ) )
+		formatString: +0.0%;-0.0%;0.0%
+		displayFolder: Time Intelligence
+		lineageTag: 442cae79-bd12-4a72-b32f-30febe0c96b3
+
+	/// Change in generic prescribing rate versus the same period last year, in percentage points.
+	measure 'Generic % Change vs PY' =
+			VAR prior = CALCULATE ( [Generic %], SAMEPERIODLASTYEAR ( 'Date'[Date] ) )
+			RETURN IF ( NOT ISBLANK ( prior ), ( [Generic %] - prior ) * 100 )
+		formatString: +0.0" pp";-0.0" pp";0.0" pp"
+		displayFolder: Time Intelligence
+		lineageTag: 2efffe4f-7ed8-4536-bd80-9182df2ddf4b
+
+	/// Items in the 12 months to the end of the period in context (blank until 12 months of data exist).
+	measure 'Items Rolling 12M' =
+			VAR periodEnd = MAX ( 'Date'[Date] )
+			VAR dataStart = CALCULATE ( MIN ( 'Date'[Date] ), REMOVEFILTERS ( 'Date' ) )
+			RETURN IF ( EDATE ( dataStart, 11 ) <= periodEnd, CALCULATE ( [Total Items], DATESINPERIOD ( 'Date'[Date], periodEnd, -12, MONTH ) ) )
+		displayFolder: Time Intelligence
+		lineageTag: d758c083-3469-4df2-9daf-78f6a42b0bd3
+
+		formatStringDefinition =
+				VAR v = SELECTEDMEASURE ()
+				RETURN SWITCH ( TRUE (), ABS ( v ) >= 1000000, "#,0.00,,""M""", ABS ( v ) >= 10000, "#,0.0,""K""", "#,0" )
+
+	/// Net ingredient cost in the 12 months to the end of the period in context (blank until 12 months of data exist).
+	measure 'Cost Rolling 12M' =
+			VAR periodEnd = MAX ( 'Date'[Date] )
+			VAR dataStart = CALCULATE ( MIN ( 'Date'[Date] ), REMOVEFILTERS ( 'Date' ) )
+			RETURN IF ( EDATE ( dataStart, 11 ) <= periodEnd, CALCULATE ( [Total Cost], DATESINPERIOD ( 'Date'[Date], periodEnd, -12, MONTH ) ) )
+		displayFolder: Time Intelligence
+		lineageTag: e51dfd0f-6466-4cce-8b75-fc59734cf968
+
+		formatStringDefinition =
+				VAR v = SELECTEDMEASURE ()
+				RETURN SWITCH ( TRUE (), ABS ( v ) >= 1000000, "£#,0.0,,""M""", ABS ( v ) >= 10000, "£#,0.0,""K""", "£#,0" )
+
+	/// Generic prescribing rate over the 12 months to the end of the period in context.
+	measure 'Generic % Rolling 12M' =
+			VAR periodEnd = MAX ( 'Date'[Date] )
+			VAR dataStart = CALCULATE ( MIN ( 'Date'[Date] ), REMOVEFILTERS ( 'Date' ) )
+			RETURN IF ( EDATE ( dataStart, 11 ) <= periodEnd, CALCULATE ( [Generic %], DATESINPERIOD ( 'Date'[Date], periodEnd, -12, MONTH ) ) )
+		formatString: 0.0%
+		displayFolder: Time Intelligence
+		lineageTag: e05ee0cf-795b-428a-805f-27c6287aa1a1
+
+	/// Lines that reached the source more than 30 days after dispensing.
+	measure 'Late Arrival Lines' = CALCULATE ( [Prescription Lines], KEEPFILTERS ( Prescriptions[Is Late Arrival] = TRUE () ) )
+		formatString: #,0
+		displayFolder: Data Quality
+		lineageTag: eb2b9cf0-6f1b-4ebf-bc19-7029a7213841
+
+	/// Share of lines that arrived late.
+	measure 'Late Arrival %' = DIVIDE ( [Late Arrival Lines], [Prescription Lines] )
+		formatString: 0.00%
+		displayFolder: Data Quality
+		lineageTag: 486f90c0-83eb-46ab-9d05-fce626622434
+
+	/// Lines corrected in the source after they first arrived.
+	measure 'Restated Lines' = CALCULATE ( [Prescription Lines], KEEPFILTERS ( Prescriptions[Is Restated] = TRUE () ) )
+		formatString: #,0
+		displayFolder: Data Quality
+		lineageTag: 599862d7-0a26-4b1a-958d-7c9d371ad251
+
+	/// Credit lines (negative items and cost).
+	measure 'Credit Lines' = CALCULATE ( [Prescription Lines], KEEPFILTERS ( Prescriptions[Is Credit] = TRUE () ) )
+		formatString: #,0
+		displayFolder: Data Quality
+		lineageTag: baa3ee9a-8cf1-433e-a55f-d874cbc998b1
+
+	/// Lines with a missing cost imputed by dbt.
+	measure 'Imputed Cost Lines' = CALCULATE ( [Prescription Lines], KEEPFILTERS ( Prescriptions[Is NIC Imputed] = TRUE () || Prescriptions[Is Actual Cost Imputed] = TRUE () ) )
+		formatString: #,0
+		displayFolder: Data Quality
+		lineageTag: b72dbd33-570b-4ea1-a4b3-462b8dc651a5
+
+	/// Average days between dispensing and the line reaching the source.
+	measure 'Avg Arrival Lag (days)' = AVERAGE ( Prescriptions[Arrival Lag Days] )
+		formatString: #,0.0
+		displayFolder: Data Quality
+		lineageTag: 47763239-6aab-412a-ac2e-65315002767c
+
+	/// Double-submitted lines removed by dbt before the fact table.
+	measure 'Duplicate Submissions Removed' = CALCULATE ( SUM ( 'Data Quality Checks'[Affected Rows] ), KEEPFILTERS ( 'Data Quality Checks'[Check] = "Duplicate submissions" ) )
+		formatString: #,0
+		displayFolder: Data Quality
+		lineageTag: 1d1a63ed-f7cd-4216-a5ce-013ad91e9391
+
+	/// Latest dispensing date in the model.
+	measure 'Data Through' = CALCULATE ( MAX ( Prescriptions[Dispensing Date] ), REMOVEFILTERS () )
+		formatString: d mmm yyyy
+		displayFolder: Data Quality
+		lineageTag: 3e16d898-49be-4bfd-9aa1-6346737492e1
+
+	/// Start time (UTC) of the most recent extract & load run.
+	measure 'Last EL Run' = MAX ( 'Pipeline Runs'[Started At] )
+		formatString: d mmm yyyy hh:nn
+		displayFolder: Pipeline
+		lineageTag: 9be0f128-be1c-48c7-b598-dcefad2992e5
+
+	/// Hours between the last EL run and now (UTC).
+	measure 'Hours Since Last EL Run' =
+			VAR lastRun = [Last EL Run]
+			RETURN IF ( NOT ISBLANK ( lastRun ), DATEDIFF ( lastRun, UTCNOW (), HOUR ) )
+		formatString: #,0
+		displayFolder: Pipeline
+		lineageTag: 8b02be02-9c99-440e-b61b-0ea305f15e6b
+
+	/// Outcome of the most recent EL run.
+	measure 'Last EL Run Status' =
+			VAR failedTables = CALCULATE ( COUNTROWS ( 'Pipeline Runs' ), KEEPFILTERS ( 'Pipeline Runs'[Is Latest Run] = TRUE () ), KEEPFILTERS ( 'Pipeline Runs'[Status] = "failed" ) )
+			RETURN IF ( failedTables > 0, "Failed", "Succeeded" )
+		displayFolder: Pipeline
+		lineageTag: b7f0d071-a20f-481d-85ba-d6759cd33b2e
+
+	/// Extract & load runs logged.
+	measure 'EL Runs' = DISTINCTCOUNT ( 'Pipeline Runs'[Run ID] )
+		formatString: #,0
+		displayFolder: Pipeline
+		lineageTag: 51b569a7-dde4-4407-b356-136fc53b15cb
+
+	/// EL runs with at least one failed table.
+	measure 'Failed EL Runs' = CALCULATE ( DISTINCTCOUNT ( 'Pipeline Runs'[Run ID] ), KEEPFILTERS ( 'Pipeline Runs'[Status] = "failed" ) )
+		formatString: #,0
+		displayFolder: Pipeline
+		lineageTag: 73448187-72aa-46c3-ae1d-f3154a61f572
+
+	/// Share of EL runs that succeeded.
+	measure 'EL Success Rate' = IF ( [EL Runs] > 0, 1 - DIVIDE ( [Failed EL Runs], [EL Runs] ) )
+		formatString: 0.0%
+		displayFolder: Pipeline
+		lineageTag: c05581a3-9056-4eb2-b4b1-da4238c8967a
+
+	/// Rows extracted across all tables in the most recent EL run.
+	measure 'Rows Loaded (Latest Run)' = CALCULATE ( SUM ( 'Pipeline Runs'[Rows Loaded] ), KEEPFILTERS ( 'Pipeline Runs'[Is Latest Run] = TRUE () ) )
+		formatString: #,0
+		displayFolder: Pipeline
+		lineageTag: a2389f7a-5596-49fe-a852-3a30ab23450a
+
+	column Value
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: f005c5b7-8953-4ec3-a963-80e7122ae82a
+		summarizeBy: none
+		sourceColumn: [Value]
+
+	partition _Measures = calculated
+		mode: import
+		source = ROW("Value", 0)
+

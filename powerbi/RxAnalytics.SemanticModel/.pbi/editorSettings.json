@@ -1,0 +1,7 @@
+{
+  "version": "1.0",
+  "autodetectRelationships": false,
+  "parallelQueryLoading": true,
+  "typeDetectionEnabled": true,
+  "relationshipImportEnabled": false
+}
