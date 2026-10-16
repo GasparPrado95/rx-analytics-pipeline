@@ -44,3 +44,7 @@ Thumbs.db
 .dbt-ci/
 site/
 gha-creds-*.json
+
+# --- Power BI exports (the PBIP folder is the source of truth) ---
+*.pbix
+RxAnalytics.pdf

@@ -1,0 +1,132 @@
+/// Calendar for the data period (2023-2025) with NHS financial year (April-March) and season. Source: marts_rx.dim_date.
+table Date
+	lineageTag: c4afce58-0e3f-4b3c-b873-84267a555fa6
+	dataCategory: Time
+
+	column Date
+		dataType: dateTime
+		isUnique
+		isKey
+		formatString: d mmm yyyy
+		lineageTag: 6d706bce-dc7c-4aa9-b217-62ea459d2a21
+		summarizeBy: none
+		sourceColumn: date_day
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column Year
+		dataType: int64
+		formatString: 0
+		lineageTag: ba245574-e3f2-44a6-800e-6434578e4fdd
+		summarizeBy: none
+		sourceColumn: year
+
+	column Quarter
+		dataType: int64
+		formatString: \Q0
+		lineageTag: f61419b0-0dab-49ec-b3e5-2d9abf0364d5
+		summarizeBy: none
+		sourceColumn: quarter
+
+	column 'Month Number'
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: de83b6f7-3bbc-4ad0-a762-52584f3a0043
+		summarizeBy: none
+		sourceColumn: month
+
+	column Month
+		dataType: string
+		lineageTag: fb03288f-f2c4-49cc-8618-38d665375dbe
+		summarizeBy: none
+		sourceColumn: month_name
+		sortByColumn: 'Month Number'
+
+	column 'Month Short'
+		dataType: string
+		lineageTag: 380ed1d1-7d5b-4e52-ab91-680dc3cf52fb
+		summarizeBy: none
+		sourceColumn: month_short
+		sortByColumn: 'Month Number'
+
+	column 'Year Month'
+		dataType: string
+		lineageTag: 8f7c633c-4704-4d29-83cf-0c8e5f0dc451
+		summarizeBy: none
+		sourceColumn: year_month
+
+	column 'Month Start'
+		dataType: dateTime
+		formatString: mmm yyyy
+		lineageTag: 2dec4f14-95e8-4be4-b847-54f7f7ea91ff
+		summarizeBy: none
+		sourceColumn: month_start
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column 'Week Start'
+		dataType: dateTime
+		isHidden
+		formatString: d mmm yyyy
+		lineageTag: a48bf709-0dbf-416f-a795-502ab672bf05
+		summarizeBy: none
+		sourceColumn: week_start
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column 'NHS Financial Year'
+		dataType: string
+		lineageTag: 267786b8-2bf3-4e3b-985a-9aeb855c5d8f
+		summarizeBy: none
+		sourceColumn: nhs_financial_year
+
+	column 'NHS Financial Quarter'
+		dataType: int64
+		formatString: \Q0
+		lineageTag: d21c3039-0286-4e08-8c76-a98eef553c35
+		summarizeBy: none
+		sourceColumn: nhs_financial_quarter
+
+	column Season
+		dataType: string
+		lineageTag: 4fb6c0ca-a064-4c92-95fa-250be4079010
+		summarizeBy: none
+		sourceColumn: season
+
+	column 'Is Weekend'
+		dataType: boolean
+		isHidden
+		lineageTag: 0d08d25a-880b-4773-81d7-756ec0a63914
+		summarizeBy: none
+		sourceColumn: is_weekend
+
+	column iso_week
+		dataType: int64
+		formatString: 0
+		lineageTag: b3e35844-5832-40e7-8c56-7d5012cc43a6
+		summarizeBy: none
+		sourceColumn: iso_week
+
+		annotation SummarizationSetBy = Automatic
+
+	column day_name
+		dataType: string
+		lineageTag: 6a446975-6751-4507-ab1f-5f79ed538383
+		summarizeBy: none
+		sourceColumn: day_name
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Date = m
+		mode: import
+		source =
+				let
+				    Source = GoogleBigQuery.Database([BillingProject = #"GCP Project"]),
+				    Dataset = Source{[Name = #"GCP Project"]}[Data]{[Name = "marts_rx", Kind = "Schema"]}[Data],
+				    Data = Dataset{[Name = "dim_date", Kind = "Table"]}[Data],
+				    // only the data period, so 'months in period' and time intelligence stay exact
+				    Period = Table.SelectRows(Data, each [date_day] >= #date(2023, 1, 1) and [date_day] <= #date(2025, 12, 31))
+				in
+				    Period
+

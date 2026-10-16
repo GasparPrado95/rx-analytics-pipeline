@@ -1,0 +1,183 @@
+/// BNF presentation with its full BNF hierarchy. Source: marts_rx.dim_medicine.
+table Medicine
+	lineageTag: 2152733b-c2f8-4ec4-b82e-954f11a1c1d8
+
+	column 'Presentation Code'
+		dataType: string
+		isKey
+		displayFolder: Codes
+		lineageTag: 8a4378ab-171f-4cc1-8ee6-081a54543296
+		summarizeBy: none
+		sourceColumn: presentation_code
+
+	/// e.g. Atorvastatin 20mg tablets
+	column Presentation
+		dataType: string
+		lineageTag: df27caa8-47a0-4d67-8f51-5755b10c4e1f
+		summarizeBy: none
+		sourceColumn: presentation_name
+
+	column 'Generic or Branded'
+		dataType: string
+		lineageTag: 508f5449-9add-44bc-b2f2-3ec04649d179
+		summarizeBy: none
+		sourceColumn: generic_or_branded
+
+	column 'Is Generic'
+		dataType: boolean
+		isHidden
+		lineageTag: 201e93b7-ca6b-49ca-9422-6c5cb40bca9e
+		summarizeBy: none
+		sourceColumn: is_generic
+
+	column Brand
+		dataType: string
+		lineageTag: 1fd59143-4b0f-4fd5-bf7b-108fe28f79e6
+		summarizeBy: none
+		sourceColumn: brand_name
+
+	column 'Generic Available'
+		dataType: boolean
+		lineageTag: 0e00e471-9f95-424c-baad-49bbe1978843
+		summarizeBy: none
+		sourceColumn: generic_available
+
+	column 'Generic Equivalent Code'
+		dataType: string
+		displayFolder: Codes
+		lineageTag: 09c75f32-6abb-4722-87ba-b9358014892f
+		summarizeBy: none
+		sourceColumn: generic_equivalent_code
+
+	column 'Generic Equivalent'
+		dataType: string
+		lineageTag: 12c62327-86b4-42c9-af58-f68c25db31bb
+		summarizeBy: none
+		sourceColumn: generic_equivalent_name
+
+	column Form
+		dataType: string
+		lineageTag: 3d49f3db-9f58-4457-8e40-5940f749481e
+		summarizeBy: none
+		sourceColumn: form
+
+	column Strength
+		dataType: string
+		lineageTag: 669c1be3-6ac3-4921-9dda-b34070fee9d1
+		summarizeBy: none
+		sourceColumn: strength
+
+	column 'Unit of Measure'
+		dataType: string
+		lineageTag: cf3463d7-5ce6-43d0-ba11-4559fca5911a
+		summarizeBy: none
+		sourceColumn: unit_of_measure
+
+	column 'Pack Quantity'
+		dataType: int64
+		formatString: 0
+		lineageTag: 5f833f91-d790-4175-a241-89eaf045b326
+		summarizeBy: none
+		sourceColumn: pack_quantity
+
+	column 'Current Unit Cost'
+		dataType: double
+		formatString: £#,0.0000
+		lineageTag: 3df568cb-c3f9-4b6c-b4c6-51e5c7aeba91
+		summarizeBy: none
+		sourceColumn: current_unit_cost
+
+	column 'Chemical Code'
+		dataType: string
+		displayFolder: Codes
+		lineageTag: 3ce9a1c8-c211-4294-b4fb-e21a78c1abe7
+		summarizeBy: none
+		sourceColumn: chemical_code
+
+	column 'Chemical Substance'
+		dataType: string
+		lineageTag: 1a79fb54-92b9-4c6e-afef-594e3cde6e49
+		summarizeBy: none
+		sourceColumn: chemical_name
+
+	column 'BNF Paragraph Code'
+		dataType: string
+		displayFolder: Codes
+		lineageTag: 626e162c-f7e1-4915-9d26-73f211534816
+		summarizeBy: none
+		sourceColumn: paragraph_code
+
+	column 'BNF Paragraph'
+		dataType: string
+		lineageTag: b3934e98-d561-4677-b1a5-15870a45ee71
+		summarizeBy: none
+		sourceColumn: paragraph_name
+
+	column 'BNF Section Code'
+		dataType: string
+		displayFolder: Codes
+		lineageTag: 11eb38d3-6953-40ea-8948-70600dcfd4e1
+		summarizeBy: none
+		sourceColumn: section_code
+
+	column 'BNF Section'
+		dataType: string
+		lineageTag: 98438b9a-fb2c-4c05-83a4-4400729a2c4b
+		summarizeBy: none
+		sourceColumn: section_name
+
+	column 'BNF Chapter Code'
+		dataType: string
+		displayFolder: Codes
+		lineageTag: 46618212-42c0-41f4-aab3-6b1b66303e4a
+		summarizeBy: none
+		sourceColumn: chapter_code
+
+	column 'BNF Chapter Name'
+		dataType: string
+		isHidden
+		lineageTag: e4bd18d7-2103-42f0-981d-3f383e5f0380
+		summarizeBy: none
+		sourceColumn: chapter_name
+
+	/// Code and name, e.g. 05 Infections (sorts in BNF order).
+	column 'BNF Chapter'
+		dataType: string
+		lineageTag: ee9337a4-76e8-4f8b-8731-877a572c33bd
+		summarizeBy: none
+		sourceColumn: chapter_label
+
+	/// BNF chapter > section > paragraph > chemical substance > presentation.
+	hierarchy 'BNF Hierarchy'
+		lineageTag: 752fb426-0175-45b2-8e88-f42548dee8f2
+
+		level Chapter
+			lineageTag: a066c2ab-43da-4fe0-a2ae-3a940fd7ccfa
+			column: 'BNF Chapter'
+
+		level Section
+			lineageTag: 9bfb62cf-2dff-4ccb-992a-11a7cba716d3
+			column: 'BNF Section'
+
+		level Paragraph
+			lineageTag: 44f32db4-10c5-4ae8-829f-5c73c5859fb3
+			column: 'BNF Paragraph'
+
+		level Chemical
+			lineageTag: ec1fd4ce-a813-4b45-a177-e20089415e6b
+			column: 'Chemical Substance'
+
+		level Presentation
+			lineageTag: 71cd9ae2-15a5-41ea-9f3f-c387a757e28d
+			column: Presentation
+
+	partition Medicine = m
+		mode: import
+		source =
+				let
+				    Source = GoogleBigQuery.Database([BillingProject = #"GCP Project"]),
+				    Dataset = Source{[Name = #"GCP Project"]}[Data]{[Name = "marts_rx", Kind = "Schema"]}[Data],
+				    Data = Dataset{[Name = "dim_medicine", Kind = "Table"]}[Data]
+				in
+				    Data
+

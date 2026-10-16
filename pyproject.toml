@@ -14,6 +14,7 @@ ignore = ["E702"]  # allow compact parallel appends in the catalogue builder
 
 [tool.ruff.lint.per-file-ignores]
 "generator/reference_data.py" = ["E501"]  # one medicine per line reads better than wrapped tuples
+"powerbi/_build/*.py" = ["E501"]  # one visual / layout spec per line reads better than wrapped literals
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
