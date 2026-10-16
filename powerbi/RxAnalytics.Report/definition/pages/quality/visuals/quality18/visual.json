@@ -1,0 +1,129 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
+  "name": "quality18",
+  "position": {
+    "x": 24,
+    "y": 248,
+    "z": 18000,
+    "height": 220,
+    "width": 700,
+    "tabOrder": 18000
+  },
+  "visual": {
+    "visualType": "tableEx",
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Data Quality Checks"
+                    }
+                  },
+                  "Property": "Check"
+                }
+              },
+              "queryRef": "Data Quality Checks.Check",
+              "nativeQueryRef": "Check"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Data Quality Checks"
+                    }
+                  },
+                  "Property": "Entity"
+                }
+              },
+              "queryRef": "Data Quality Checks.Entity",
+              "nativeQueryRef": "Entity"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Data Quality Checks"
+                    }
+                  },
+                  "Property": "Affected Rows"
+                }
+              },
+              "queryRef": "Data Quality Checks.Affected Rows",
+              "nativeQueryRef": "Affected Rows"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Data Quality Checks"
+                    }
+                  },
+                  "Property": "Affected Share"
+                }
+              },
+              "queryRef": "Data Quality Checks.Affected Share",
+              "nativeQueryRef": "Affected Share"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Data Quality Checks"
+                    }
+                  },
+                  "Property": "Handling"
+                }
+              },
+              "queryRef": "Data Quality Checks.Handling",
+              "nativeQueryRef": "Handling"
+            }
+          ]
+        }
+      }
+    },
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Data-quality checks and how the pipeline handles them'"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "subTitle": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  }
+}
