@@ -1,0 +1,24 @@
+snapshots:
+  - name: snap_medicine_prices
+    description: >
+      SCD Type 2 history of each medicine's unit cost, captured by dbt from the source's
+      `medicine` table (which only ever holds the current price). Each run that sees a newer
+      `updated_at` closes the previous version (`dbt_valid_to`) and opens a new one.
+      The source also keeps its own `medicine_price_history`; the snapshot shows how you would
+      build that history when a source system does not.
+    relation: source('rx', 'medicine')
+    config:
+      unique_key: presentation_code
+      strategy: timestamp
+      updated_at: updated_at
+      dbt_valid_to_current: "cast('9999-12-31' as timestamp)"
+    columns:
+      - name: presentation_code
+        description: BNF presentation code (business key).
+        data_tests: [not_null]
+      - name: unit_cost
+        description: Unit cost in GBP valid between dbt_valid_from and dbt_valid_to.
+      - name: dbt_valid_from
+        description: When this price version became current (source updated_at).
+      - name: dbt_valid_to
+        description: When it was superseded; 9999-12-31 for the current version.
