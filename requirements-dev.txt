@@ -1,0 +1,4 @@
+# Development / CI tooling (on top of requirements.txt)
+ruff==0.17.1
+sqlfluff==4.4.0
+sqlfluff-templater-dbt==4.4.0
