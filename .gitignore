@@ -47,4 +47,4 @@ gha-creds-*.json
 
 # --- Power BI exports (the PBIP folder is the source of truth) ---
 *.pbix
-/RxAnalytics.pdf
+RxAnalytics.pdf

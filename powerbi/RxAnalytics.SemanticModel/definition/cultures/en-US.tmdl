@@ -211,7 +211,7 @@ cultureInfo en-US
 			          }
 			        },
 			        {
-			          "Items /1k": {
+			          "Items/1k": {
 			            "State": "Suggested",
 			            "Source": {
 			              "Type": "External",
@@ -232,7 +232,7 @@ cultureInfo en-US
 			      "State": "Generated",
 			      "Terms": [
 			        {
-			          "vs prior year": {
+			          "Latest year vs prior year": {
 			            "State": "Suggested",
 			            "Source": {
 			              "Type": "External",
@@ -253,7 +253,7 @@ cultureInfo en-US
 			      "State": "Generated",
 			      "Terms": [
 			        {
-			          "vs prior year": {
+			          "Latest year vs prior year": {
 			            "State": "Suggested",
 			            "Source": {
 			              "Type": "External",
@@ -274,7 +274,7 @@ cultureInfo en-US
 			      "State": "Generated",
 			      "Terms": [
 			        {
-			          "vs prior year": {
+			          "Latest year vs prior year": {
 			            "State": "Suggested",
 			            "Source": {
 			              "Type": "External",
@@ -326,7 +326,7 @@ cultureInfo en-US
 			          }
 			        },
 			        {
-			          "Cost /1k": {
+			          "Cost/1k": {
 			            "State": "Suggested",
 			            "Source": {
 			              "Type": "External",
@@ -357,7 +357,7 @@ cultureInfo en-US
 			          }
 			        },
 			        {
-			          "Antibacterial /1k": {
+			          "Abx/1k": {
 			            "State": "Suggested",
 			            "Source": {
 			              "Type": "External",

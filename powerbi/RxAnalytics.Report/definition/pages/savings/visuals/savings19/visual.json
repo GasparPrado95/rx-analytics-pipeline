@@ -1,5 +1,5 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
   "name": "savings19",
   "position": {
     "x": 436,
@@ -28,6 +28,7 @@
               },
               "queryRef": "Medicine.Chemical Substance",
               "nativeQueryRef": "Chemical substance",
+              "active": true,
               "displayName": "Chemical substance"
             }
           ]
@@ -157,7 +158,6 @@
     "filters": [
       {
         "name": "top6save",
-        "type": "TopN",
         "field": {
           "Column": {
             "Expression": {
@@ -168,12 +168,12 @@
             "Property": "Chemical Substance"
           }
         },
+        "type": "TopN",
         "filter": {
           "Version": 2,
           "From": [
             {
               "Name": "subquery",
-              "Type": 2,
               "Expression": {
                 "Subquery": {
                   "Query": {
@@ -221,7 +221,8 @@
                     "Top": 6
                   }
                 }
-              }
+              },
+              "Type": 2
             },
             {
               "Name": "t",

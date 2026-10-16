@@ -65,14 +65,14 @@
       "type": "RegisteredResources",
       "items": [
         {
-          "name": "rx-plum-gold.json",
-          "path": "rx-plum-gold.json",
-          "type": "CustomTheme"
-        },
-        {
           "name": "cover.jpg",
           "path": "cover.jpg",
           "type": "Image"
+        },
+        {
+          "name": "rx-plum-gold.json",
+          "path": "rx-plum-gold.json",
+          "type": "CustomTheme"
         }
       ]
     }

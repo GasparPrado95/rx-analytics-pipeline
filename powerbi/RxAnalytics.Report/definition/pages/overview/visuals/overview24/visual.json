@@ -1,5 +1,5 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
   "name": "overview24",
   "position": {
     "x": 24,
@@ -28,6 +28,7 @@
               },
               "queryRef": "Medicine.BNF Chapter",
               "nativeQueryRef": "BNF chapter",
+              "active": true,
               "displayName": "BNF chapter"
             }
           ]
@@ -140,7 +141,6 @@
     "filters": [
       {
         "name": "top5chap",
-        "type": "TopN",
         "field": {
           "Column": {
             "Expression": {
@@ -151,12 +151,12 @@
             "Property": "BNF Chapter"
           }
         },
+        "type": "TopN",
         "filter": {
           "Version": 2,
           "From": [
             {
               "Name": "subquery",
-              "Type": 2,
               "Expression": {
                 "Subquery": {
                   "Query": {
@@ -204,7 +204,8 @@
                     "Top": 5
                   }
                 }
-              }
+              },
+              "Type": 2
             },
             {
               "Name": "t",

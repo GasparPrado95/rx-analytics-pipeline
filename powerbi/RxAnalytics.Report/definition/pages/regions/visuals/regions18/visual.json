@@ -1,5 +1,5 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
   "name": "regions18",
   "position": {
     "x": 416,
@@ -27,7 +27,8 @@
                 }
               },
               "queryRef": "Practice.ICB",
-              "nativeQueryRef": "ICB"
+              "nativeQueryRef": "ICB",
+              "active": true
             }
           ]
         },

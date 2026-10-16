@@ -1,5 +1,5 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
   "name": "medicines17",
   "position": {
     "x": 24,
@@ -28,6 +28,7 @@
               },
               "queryRef": "Medicine.BNF Chapter",
               "nativeQueryRef": "BNF chapter",
+              "active": true,
               "displayName": "BNF chapter"
             },
             {
@@ -43,6 +44,7 @@
               },
               "queryRef": "Medicine.BNF Section",
               "nativeQueryRef": "Section",
+              "active": false,
               "displayName": "Section"
             },
             {
@@ -58,6 +60,7 @@
               },
               "queryRef": "Medicine.BNF Paragraph",
               "nativeQueryRef": "Paragraph",
+              "active": false,
               "displayName": "Paragraph"
             },
             {
@@ -73,6 +76,7 @@
               },
               "queryRef": "Medicine.Chemical Substance",
               "nativeQueryRef": "Chemical",
+              "active": false,
               "displayName": "Chemical"
             },
             {
@@ -87,7 +91,8 @@
                 }
               },
               "queryRef": "Medicine.Presentation",
-              "nativeQueryRef": "Presentation"
+              "nativeQueryRef": "Presentation",
+              "active": false
             }
           ]
         },
